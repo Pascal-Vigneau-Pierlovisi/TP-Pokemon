@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Pokemon<Types_Poke>{
 
     private String nom;
-    //private Pokedex numPokedex;
+    private int numPokedex;
     private int pv;
     private int atk;
     private int def;
@@ -11,6 +12,8 @@ public class Pokemon<Types_Poke>{
     private int defSpe;
     private int vitesse;
     private ArrayList<Types_Poke> lst_types;
+    private ArrayList<Attaque> lesAttaques;
+    Random r = new Random();
 
 // Getter
 
@@ -26,7 +29,7 @@ public class Pokemon<Types_Poke>{
         return defSpe;
     }
 
-    public int getDefense() {
+    public int getDef() {
         return def;
     }
 
@@ -46,6 +49,10 @@ public class Pokemon<Types_Poke>{
         return lst_types;
     }
 
+    public ArrayList<Attaque> getLesAttaques() {
+        return lesAttaques;
+    }
+
     // Setter
 
     public void setAtk(int atk) {
@@ -60,7 +67,7 @@ public class Pokemon<Types_Poke>{
         this.defSpe = defSpe;
     }
 
-    public void setDefense(int defense) {
+    public void setDef(int defense) {
         this.def = defense;
     }
 
@@ -80,16 +87,15 @@ public class Pokemon<Types_Poke>{
         this.lst_types = lst_types;
     }
 
+    public void setLesAttaques(ArrayList<Attaque> lesAttaques) {
+        this.lesAttaques = lesAttaques;
+    }
+
     // Constructeur
 
-    public Pokemon(String nNom, int nPv, int nAtk, int nDef, int nAtkSpe, int nDefSpe, int nVitesse, ArrayList<Types_Poke> nTypes){
-        nom = nNom;
-        pv = nPv;
-        atk = nAtk;
-        def = nDef;
-        atkSpe = nAtkSpe;
-        defSpe = nDefSpe;
-        vitesse = nVitesse;
+    public Pokemon(){
+        numPokedex = r.nextInt(37);
+
     }
 
     public void evoluer(){
