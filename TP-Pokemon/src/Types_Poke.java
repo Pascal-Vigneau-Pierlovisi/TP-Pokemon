@@ -1,18 +1,75 @@
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Types_Poke {
 
     private String nom;
-    private ArrayList<Types_Poke> faiblesse;
-    private ArrayList<Types_Poke> resistance;
-    private ArrayList<Types_Poke> efficacite;
-    private ArrayList<Types_Poke> neutralite;
+    private Map<String, List<String>> efficacite = new HashMap<>();
+    private Map<String, List<String>> peuEfficace = new HashMap<>();
+    private Map<String, List<String>> neutralite = new HashMap<>();
 
-    public Types_Poke(String nNom, ArrayList<Types_Poke> lstFaiblesse, ArrayList<Types_Poke> lstEfficacite, ArrayList<Types_Poke> lstNeutralite){
-        nom = nNom;
-        faiblesse = lstFaiblesse;
-        efficacite = lstEfficacite;
-        lstNeutralite = neutralite;
+    DataFormatter formatter = new DataFormatter();
+    
+    
+    public Types_Poke(){
+        {
+            try {
+                FileInputStream file = new FileInputStream(new File("./TP-Pokemon/csv/Pokemon_Type_Chart.xlsx"));
+                try (Workbook workbook = new XSSFWorkbook(file)) {
+                    Sheet sheet = workbook.getSheetAt(0);
+                    int i = 0;
+                    for (Row row : sheet) {
+                        if (i >= 1){
+                            String type = row.getCell(0).getRichStringCellValue().getString();
+                            efficacite.put(type, new ArrayList<String>());
+                            peuEfficace.put(type, new ArrayList<String>());
+                            neutralite.put(type, new ArrayList<String>());
+                            for(Cell cell : row){
+                                System.out.println(cell.getCellType());
+                                if(cell.getCellType().equals(CellType.NUMERIC)){
+                                    int place = cell.getColumnIndex();
+                                    String typeCol = sheet.getRow(0).getCell(place).getRichStringCellValue().getString();
+                                    if(compare(cell.getNumericCellValue(), 0.5)){
+                                        peuEfficace.get(type).add(typeCol);
+                                    }
+                                    else if(cell.getNumericCellValue() ==  2){
+                                        efficacite.get(type).add(typeCol);
+                                    }
+                                    else if(cell.getNumericCellValue() ==  0){
+                                        neutralite.get(type).add(typeCol);
+                                    }
+                                    else{
+                                        
+                                    }
+                                }  
+                            }
+                        }
+                        
+                        i++;
+                    }
+                }
+                
+            } catch (Exception e) {
+                System.out.println("Fin du tableau " + e.toString());
+            }
+        }
+    }
+
+    private boolean compare(double numericCellValue, double d) {
+        return false;
     }
 
     //Getter
@@ -20,21 +77,18 @@ public class Types_Poke {
         return nom;
     }
 
-    public ArrayList<Types_Poke> getEfficacite() {
+    public Map<String, List<String>> getEfficacite() {
         return efficacite;
     }
 
-    public ArrayList<Types_Poke> getFaiblesse() {
-        return faiblesse;
-    }
-
-    public ArrayList<Types_Poke> getNeutralite() {
+    public Map<String, List<String>> getNeutralite() {
         return neutralite;
     }
 
-    public ArrayList<Types_Poke> getResistance() {
-        return resistance;
+    public Map<String, List<String>> getPeuEfficace() {
+        return peuEfficace;
     }
+
     @Override
     public String toString() {
         // TODO Auto-generated method stub

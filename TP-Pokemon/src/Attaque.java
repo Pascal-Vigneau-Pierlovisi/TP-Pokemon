@@ -35,7 +35,8 @@ public class Attaque{
         return puissance;
     }
 
-    public int calculEfficacite(Pokemon<Types_Poke> pokAdv){
+    /* 
+    public int calculEfficacite(Pokemon pokAdv){
         int degat = this.puissance;
         for (Types_Poke type : pokAdv.getLst_types()) {
             if (type.getFaiblesse().contains(this.typeAtk)){
@@ -45,7 +46,7 @@ public class Attaque{
         return degat;
     }
 
-    public int calculResistance(Pokemon<Types_Poke> pokAdv){
+    public int calculResistance(Pokemon pokAdv){
         int degat = this.puissance;
         for (Types_Poke type : pokAdv.getLst_types()) {
             if (type.getResistance().contains(this.typeAtk)){
@@ -55,7 +56,7 @@ public class Attaque{
         return degat;
     }
 
-    public int isNeutre(Pokemon<Types_Poke> pokAdv){
+    public int isNeutre(Pokemon pokAdv){
         int degat = this.puissance;
         for (Types_Poke type : pokAdv.getLst_types()) {
             if (type.getNeutralite().contains(this.typeAtk)){
@@ -64,5 +65,6 @@ public class Attaque{
         }
         return degat;
     }
+    */
 
 }

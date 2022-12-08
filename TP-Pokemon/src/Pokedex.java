@@ -15,7 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Pokedex {
 
-    private Map<Integer, List<String>> pokedex = new HashMap<>();
+    private Map<Integer, List<Object>> pokedex = new HashMap<>();
 
     public Pokedex(File nPokedex){
         {
@@ -26,7 +26,7 @@ public class Pokedex {
                     Sheet sheet = workbook.getSheetAt(0);
                     int i = 1;
                     for (Row row : sheet) {
-                        pokedex.put(i, new ArrayList<String>());
+                        pokedex.put(i, new ArrayList<Object>());
                         for (Cell cell : row) {
                             switch (cell.getCellType()) {
                                 case STRING:
@@ -34,13 +34,13 @@ public class Pokedex {
                                     break;
                                 case NUMERIC:
                                     if (DateUtil.isCellDateFormatted(cell)) {
-                                        pokedex.get(i).add(cell.getDateCellValue() + "");
+                                        pokedex.get(i).add(cell.getDateCellValue());
                                     } else {
-                                        pokedex.get(i).add(cell.getNumericCellValue() + "");
+                                        pokedex.get(i).add(cell.getNumericCellValue());
                                     };
                                     break;
                                 case BOOLEAN:
-                                     pokedex.get(i).add(cell.getBooleanCellValue() + ""); break;
+                                     pokedex.get(i).add(cell.getBooleanCellValue()); break;
                                 default: pokedex.get(Integer.valueOf(i)).add(" ");
                             }
                         }
@@ -53,7 +53,7 @@ public class Pokedex {
             }
         }
     }
-    public Map<Integer, List<String>> getPokedex() {
+    public Map<Integer, List<Object>> getPokedex() {
         return pokedex;
     }
 }

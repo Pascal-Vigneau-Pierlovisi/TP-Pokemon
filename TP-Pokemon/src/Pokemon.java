@@ -1,35 +1,60 @@
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
-public class Pokemon<Types_Poke>{
+public class Pokemon{
 
     private String nom;
     private int numPokedex;
-    private int pv;
-    private int atk;
-    private int def;
-    private int atkSpe;
-    private int defSpe;
-    private int vitesse;
+    private double pv;
+    private double atk;
+    private double def;
+    private double atkSpe;
+    private double defSpe;
+    private double vitesse;
     private ArrayList<Types_Poke> lst_types;
     private ArrayList<Attaque> lesAttaques;
     Random r = new Random();
 
+
+    // Constructeur
+
+    public Pokemon(Pokedex pokedex){  
+        numPokedex = r.nextInt(37);
+        System.out.println(pokedex.getPokedex().get(numPokedex).get(6).getClass() +"hého");
+        nom = (String)pokedex.getPokedex().get(numPokedex).get(1);
+        pv = (double)pokedex.getPokedex().get(numPokedex).get(6);
+        atk = (double)pokedex.getPokedex().get(numPokedex).get(7);
+        def = (double)pokedex.getPokedex().get(numPokedex).get(8);
+        atkSpe = (double)pokedex.getPokedex().get(numPokedex).get(9);
+        defSpe = (double)pokedex.getPokedex().get(numPokedex).get(10);
+        vitesse = (double)pokedex.getPokedex().get(numPokedex).get(11);
+        lst_types.set(0, (Types_Poke)pokedex.getPokedex().get(numPokedex).get(3));
+        if ((String)pokedex.getPokedex().get(numPokedex).get(4) != " "){
+            lst_types.set(0, (Types_Poke)pokedex.getPokedex().get(numPokedex).get(4));
+        }
+    }
+
 // Getter
 
-    public int getAtk() {
+    public int getNumPokedex() {
+        return numPokedex;
+    }
+
+    public double getAtk() {
         return atk;
     }
 
-    public int getAtkSpe() {
+    public double getAtkSpe() {
         return atkSpe;
     }
 
-    public int getDefSpe() {
+    public double getDefSpe() {
         return defSpe;
     }
 
-    public int getDef() {
+    public double getDef() {
         return def;
     }
 
@@ -37,11 +62,11 @@ public class Pokemon<Types_Poke>{
         return nom;
     }
 
-    public int getPv() {
+    public double getPv() {
         return pv;
     }
 
-    public int getVitesse() {
+    public double getVitesse() {
         return vitesse;
     }
 
@@ -55,19 +80,19 @@ public class Pokemon<Types_Poke>{
 
     // Setter
 
-    public void setAtk(int atk) {
+    public void setAtk(double atk) {
         this.atk = atk;
     }
 
-    public void setAtkSpe(int atkSpe) {
+    public void setAtkSpe(double atkSpe) {
         this.atkSpe = atkSpe;
     }
 
-    public void setDefSpe(int defSpe) {
+    public void setDefSpe(double defSpe) {
         this.defSpe = defSpe;
     }
 
-    public void setDef(int defense) {
+    public void setDef(double defense) {
         this.def = defense;
     }
 
@@ -75,11 +100,11 @@ public class Pokemon<Types_Poke>{
         this.nom = nom;
     }
 
-    public void setPv(int pv) {
+    public void setPv(double pv) {
         this.pv = pv;
     }
 
-    public void setVitesse(int vitesse) {
+    public void setVitesse(double vitesse) {
         this.vitesse = vitesse;
     }
 
@@ -89,13 +114,6 @@ public class Pokemon<Types_Poke>{
 
     public void setLesAttaques(ArrayList<Attaque> lesAttaques) {
         this.lesAttaques = lesAttaques;
-    }
-
-    // Constructeur
-
-    public Pokemon(){
-        numPokedex = r.nextInt(37);
-
     }
 
     public void evoluer(){
