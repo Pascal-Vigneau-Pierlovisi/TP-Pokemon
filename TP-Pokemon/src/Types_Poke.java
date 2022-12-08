@@ -4,6 +4,7 @@ public class Types_Poke {
 
     private String nom;
     private ArrayList<Types_Poke> faiblesse;
+    private ArrayList<Types_Poke> resistance;
     private ArrayList<Types_Poke> efficacite;
     private ArrayList<Types_Poke> neutralite;
 
@@ -31,6 +32,9 @@ public class Types_Poke {
         return neutralite;
     }
 
+    public ArrayList<Types_Poke> getResistance() {
+        return resistance;
+    }
     @Override
     public String toString() {
         // TODO Auto-generated method stub

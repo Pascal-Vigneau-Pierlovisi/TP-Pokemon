@@ -13,6 +13,9 @@ public class Attaque{
         genre = nGenre;
         precision = nPrecision;
         puissance = nPuissance;
+        if (nGenre == 2){
+            puissance = 0;
+        }
     }
 
     //Getter
@@ -32,11 +35,31 @@ public class Attaque{
         return puissance;
     }
 
-    public int calculEfficacite(Pokemon pokAdv){
+    public int calculEfficacite(Pokemon<Types_Poke> pokAdv){
         int degat = this.puissance;
         for (Types_Poke type : pokAdv.getLst_types()) {
             if (type.getFaiblesse().contains(this.typeAtk)){
                 degat = 2 * this.puissance;
+            }
+        }
+        return degat;
+    }
+
+    public int calculResistance(Pokemon<Types_Poke> pokAdv){
+        int degat = this.puissance;
+        for (Types_Poke type : pokAdv.getLst_types()) {
+            if (type.getResistance().contains(this.typeAtk)){
+                degat = (int)0.5 * this.puissance;
+            }
+        }
+        return degat;
+    }
+
+    public int isNeutre(Pokemon<Types_Poke> pokAdv){
+        int degat = this.puissance;
+        for (Types_Poke type : pokAdv.getLst_types()) {
+            if (type.getNeutralite().contains(this.typeAtk)){
+                degat = (int)0 * this.puissance;
             }
         }
         return degat;
