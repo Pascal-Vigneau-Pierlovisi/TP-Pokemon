@@ -1,27 +1,31 @@
+import java.util.List;
+
 public class Attaque{
 
     private String nom;
-    private int genre;
+    private String genre;
     private int precision;
     private int puissance;
     private String typeAtk;
-    private static String[] nomGenre = {"Physique", "Special", "Statue"};
+    private static String[] nomGenre = {"Physique", "Special", "Statut"};
 
 
-    public Attaque(String nNom, int nGenre, int nPrecision, int nPuissance, String nTypeAtk){
-        nom = nNom;
-        genre = nGenre;
-        precision = nPrecision;
-        puissance = nPuissance;
-        if (nGenre == 2){
-            puissance = 0;
+    public Attaque(String nNom, String nGenre, int nPrecision, int nPuissance, String nTypeAtk, List<String> listType) throws NotATypeException{
+        System.out.println(nTypeAtk);
+        for (String type : listType){
+            if (type.equals(nTypeAtk)) {
+                typeAtk = nTypeAtk;
+                nom = nNom;
+                genre = nGenre;
+                precision = nPrecision;
+                puissance = nPuissance;
+                if (nGenre == "Statut"){
+                    puissance = 0;
+                }
+            }
         }
-        try {
-            typeAtk = nTypeAtk;
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-         
+        
+    
     }
 
     //Getter
@@ -30,7 +34,7 @@ public class Attaque{
     }
 
     public String getNomGenre() {
-        return nomGenre[genre];
+        return genre;
     }
 
     public int getPrecision() {
@@ -41,8 +45,15 @@ public class Attaque{
         return puissance;
     }
 
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return nom;
+    }
+
  
-    public int calculEfficacite(Pokemon pokAdv, Types_Poke tabTypes){
+    public int calculEfficacite(Pokemon pokAdv){
+        Types_Poke tabTypes = new Types_Poke();
         int degat = this.puissance;
         for (String type : pokAdv.getLst_types()) {
             if (tabTypes.getEfficacite(type).contains(this.typeAtk)){
@@ -52,7 +63,8 @@ public class Attaque{
         return degat;
     }
 
-    public int calculResistance(Pokemon pokAdv, Types_Poke tabTypes){
+    public int calculResistance(Pokemon pokAdv){
+        Types_Poke tabTypes = new Types_Poke();
         int degat = this.puissance;
         for (String type : pokAdv.getLst_types()) {
             if (tabTypes.getPeuEfficace(type).contains(this.typeAtk)){
@@ -62,7 +74,8 @@ public class Attaque{
         return degat;
     }
 
-    public int isNeutre(Pokemon pokAdv, Types_Poke tabTypes){
+    public int isNeutre(Pokemon pokAdv){
+        Types_Poke tabTypes = new Types_Poke();
         int degat = this.puissance;
         for (String type : pokAdv.getLst_types()) {
             if (tabTypes.getNeutralite(type).contains(this.typeAtk)){
