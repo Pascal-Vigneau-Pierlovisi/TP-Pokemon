@@ -4,11 +4,11 @@ public class Attaque{
     private int genre;
     private int precision;
     private int puissance;
-    private Types_Poke typeAtk;
+    private String typeAtk;
     private static String[] nomGenre = {"Physique", "Special", "Statue"};
 
 
-    public Attaque(String nNom, int nGenre, int nPrecision, int nPuissance){
+    public Attaque(String nNom, int nGenre, int nPrecision, int nPuissance, String nTypeAtk){
         nom = nNom;
         genre = nGenre;
         precision = nPrecision;
@@ -16,6 +16,12 @@ public class Attaque{
         if (nGenre == 2){
             puissance = 0;
         }
+        try {
+            typeAtk = nTypeAtk;
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+         
     }
 
     //Getter
@@ -35,36 +41,36 @@ public class Attaque{
         return puissance;
     }
 
-    /* 
-    public int calculEfficacite(Pokemon pokAdv){
+ 
+    public int calculEfficacite(Pokemon pokAdv, Types_Poke tabTypes){
         int degat = this.puissance;
-        for (Types_Poke type : pokAdv.getLst_types()) {
-            if (type.getFaiblesse().contains(this.typeAtk)){
+        for (String type : pokAdv.getLst_types()) {
+            if (tabTypes.getEfficacite(type).contains(this.typeAtk)){
                 degat = 2 * this.puissance;
             }
         }
         return degat;
     }
 
-    public int calculResistance(Pokemon pokAdv){
+    public int calculResistance(Pokemon pokAdv, Types_Poke tabTypes){
         int degat = this.puissance;
-        for (Types_Poke type : pokAdv.getLst_types()) {
-            if (type.getResistance().contains(this.typeAtk)){
+        for (String type : pokAdv.getLst_types()) {
+            if (tabTypes.getPeuEfficace(type).contains(this.typeAtk)){
                 degat = (int)0.5 * this.puissance;
             }
         }
         return degat;
     }
 
-    public int isNeutre(Pokemon pokAdv){
+    public int isNeutre(Pokemon pokAdv, Types_Poke tabTypes){
         int degat = this.puissance;
-        for (Types_Poke type : pokAdv.getLst_types()) {
-            if (type.getNeutralite().contains(this.typeAtk)){
+        for (String type : pokAdv.getLst_types()) {
+            if (tabTypes.getNeutralite(type).contains(this.typeAtk)){
                 degat = (int)0 * this.puissance;
             }
         }
         return degat;
     }
-    */
+    
 
 }

@@ -9,14 +9,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Types_Poke {
 
-    private String nom;
     private Map<String, List<String>> efficacite = new HashMap<>();
     private Map<String, List<String>> peuEfficace = new HashMap<>();
     private Map<String, List<String>> neutralite = new HashMap<>();
@@ -38,7 +36,6 @@ public class Types_Poke {
                             peuEfficace.put(type, new ArrayList<String>());
                             neutralite.put(type, new ArrayList<String>());
                             for(Cell cell : row){
-                                System.out.println(cell.getCellType());
                                 if(cell.getCellType().equals(CellType.NUMERIC)){
                                     int place = cell.getColumnIndex();
                                     String typeCol = sheet.getRow(0).getCell(place).getRichStringCellValue().getString();
@@ -73,20 +70,17 @@ public class Types_Poke {
     }
 
     //Getter
-    public String getNom() {
-        return nom;
+
+    public List<String> getEfficacite(String type) {
+        return efficacite.get(type);
     }
 
-    public Map<String, List<String>> getEfficacite() {
-        return efficacite;
+    public List<String> getNeutralite(String type) {
+        return neutralite.get(type);
     }
 
-    public Map<String, List<String>> getNeutralite() {
-        return neutralite;
-    }
-
-    public Map<String, List<String>> getPeuEfficace() {
-        return peuEfficace;
+    public List<String> getPeuEfficace(String type) {
+        return peuEfficace.get(type);
     }
 
     @Override

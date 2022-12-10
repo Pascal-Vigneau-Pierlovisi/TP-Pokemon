@@ -13,16 +13,19 @@ public class Pokemon{
     private double atkSpe;
     private double defSpe;
     private double vitesse;
-    private ArrayList<Types_Poke> lst_types;
-    private ArrayList<Attaque> lesAttaques;
+    private ArrayList<String> lst_types = new ArrayList<>();
+    private ArrayList<Attaque> lesAttaques = new ArrayList<>();
     Random r = new Random();
 
 
     // Constructeur
 
-    public Pokemon(Pokedex pokedex){  
+    public Pokemon(Pokedex pokedex){
+
         numPokedex = r.nextInt(37);
-        System.out.println(pokedex.getPokedex().get(numPokedex).get(6).getClass() +"hého");
+        while(!(boolean)pokedex.getPokedex().get(numPokedex).get(5)){
+            numPokedex = r.nextInt(37);
+        }
         nom = (String)pokedex.getPokedex().get(numPokedex).get(1);
         pv = (double)pokedex.getPokedex().get(numPokedex).get(6);
         atk = (double)pokedex.getPokedex().get(numPokedex).get(7);
@@ -30,9 +33,9 @@ public class Pokemon{
         atkSpe = (double)pokedex.getPokedex().get(numPokedex).get(9);
         defSpe = (double)pokedex.getPokedex().get(numPokedex).get(10);
         vitesse = (double)pokedex.getPokedex().get(numPokedex).get(11);
-        lst_types.set(0, (Types_Poke)pokedex.getPokedex().get(numPokedex).get(3));
+        lst_types.add((String)pokedex.getPokedex().get(numPokedex).get(3));
         if ((String)pokedex.getPokedex().get(numPokedex).get(4) != " "){
-            lst_types.set(0, (Types_Poke)pokedex.getPokedex().get(numPokedex).get(4));
+            lst_types.add((String)pokedex.getPokedex().get(numPokedex).get(4));
         }
     }
 
@@ -70,7 +73,7 @@ public class Pokemon{
         return vitesse;
     }
 
-    public ArrayList<Types_Poke> getLst_types() {
+    public ArrayList<String> getLst_types() {
         return lst_types;
     }
 
@@ -108,12 +111,18 @@ public class Pokemon{
         this.vitesse = vitesse;
     }
 
-    public void setLst_types(ArrayList<Types_Poke> lst_types) {
+    public void setLst_types(ArrayList<String> lst_types) {
         this.lst_types = lst_types;
     }
 
     public void setLesAttaques(ArrayList<Attaque> lesAttaques) {
         this.lesAttaques = lesAttaques;
+    }
+
+    @Override
+    public String toString() {
+        
+        return "Nom: " + this.nom + "; N°: " + this.numPokedex + "; Type: " + this.lst_types;
     }
 
     public void evoluer(){

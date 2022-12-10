@@ -39,8 +39,8 @@ public class Pokedex {
                                         pokedex.get(i).add(cell.getNumericCellValue());
                                     };
                                     break;
-                                case BOOLEAN:
-                                     pokedex.get(i).add(cell.getBooleanCellValue()); break;
+                                case FORMULA:
+                                    pokedex.get(i).add(cell.getBooleanCellValue()); break;
                                 default: pokedex.get(Integer.valueOf(i)).add(" ");
                             }
                         }
