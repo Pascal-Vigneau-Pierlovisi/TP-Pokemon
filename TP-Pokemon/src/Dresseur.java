@@ -1,6 +1,8 @@
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.io.*;
@@ -15,13 +17,14 @@ public class Dresseur
 {
     private String pseudo;
     private List<Pokemon> equipe = new ArrayList<>();
-    private int id;
+    private long id;
     private int ticket;
+    Scanner ourNewscanner = new Scanner(System.in);
 
-    public Dresseur(String nPseudo, int nId) throws NotATypeException{
+    public Dresseur(String nPseudo, long l) throws NotATypeException{
         pseudo = nPseudo;
         ticket = 0;
-        id = nId;
+        id = l;
         Pokemon pokemon = new Pokemon();
         equipe.add(pokemon);
     }
@@ -50,8 +53,8 @@ public class Dresseur
                 if(tosend == 1)
                 {
                     System.out.println(ournewDataInputstream.readUTF());
-                    int dresseurAdv = ourNewscanner.nextInt();
-                    ournewDataOutputstream.writeInt(dresseurAdv);
+                    long dresseurAdv = ourNewscanner.nextLong();
+                    ournewDataOutputstream.writeLong(dresseurAdv);
                 }
                 // Sortir de la boucle while doit être quand un client rentre Exit.
                 if(tosend == 3)
@@ -76,7 +79,7 @@ public class Dresseur
     }
 
     //Getter
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -110,7 +113,25 @@ public class Dresseur
         }   
     }
 
-    public void duel(int dresseurAdv){
+    public Pokemon choisirPremierPokemon(){
+        if (this.equipe.size() > 1){
+            System.out.println("Qui commence le combat?\n" + this.equipe);
+            int lePokemon = ourNewscanner.nextInt();
+            Collections.swap(equipe, 0, lePokemon);
+        }
+        System.out.println(this.equipe.get(0).getNom() + ", go!");
+        return this.equipe.get(0);
+    }
+
+    public Pokemon changerPokemon(){
+        System.out.println("Revient " + this.equipe.get(0).getNom() + " !");
+        int lePokemon = ourNewscanner.nextInt();
+        Collections.swap(equipe, 0, lePokemon);
+        System.out.println(this.equipe.get(0).getNom() + ", go!");
+        return this.equipe.get(0);
+    }
+
+    public Attaque choisirAttaquePokemon(Pokemon lePokemon){
 
     }
 
