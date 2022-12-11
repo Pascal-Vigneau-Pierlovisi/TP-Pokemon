@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -23,6 +24,7 @@ public class Pokemon{
     private int defSpe = (int) (2 * defSpeBase * niveau/15 + 10 + niveau);
     private int vitesse = (int) (2 * vitesseBase * niveau/15 + 10 + niveau);
     private boolean ko;
+    private Pokedex pokedex = new Pokedex(new File("./TP-Pokemon/csv/kanto.xlsx"));
     
     Random r = new Random();
     Scanner myObj = new Scanner(System.in);
@@ -34,7 +36,7 @@ public class Pokemon{
      * et lui donne toutes les stats répertorié dans le Pokedex.
      * Le constructeur donne aussi une ou deux attaques en fonction de son ou ses types
      */
-    public Pokemon(Pokedex pokedex) throws NotATypeException{
+    public Pokemon() throws NotATypeException{
         numPokedex = r.nextInt(37);
         while(!(boolean)pokedex.getPokedex().get(numPokedex).get(5)){
             numPokedex = r.nextInt(37);
@@ -252,7 +254,7 @@ public class Pokemon{
     }
 
     /*Fait évoluer le pokémon en lui rajoutant une ou deux attaques en fonction de ses types */
-    public void evoluer(Pokedex pokedex) throws NotATypeException{
+    public void evoluer() throws NotATypeException{
         if((boolean) pokedex.getPokedex().get(numPokedex).get(2)){
             numPokedex += 1; 
             nom = (String)pokedex.getPokedex().get(numPokedex).get(1);
