@@ -32,7 +32,7 @@ public class DresseurHandler implements Runnable{
         try {
             ournewDataOutputstream.writeUTF("Votre pseudo?");
             pseudoRecu = ournewDataInputstream.readUTF();
-			Arene.setDresseurs(new Dresseur(pseudoRecu, mynewSocket, myThread.threadId()));
+			Arene.setDresseurs(new Dresseur(pseudoRecu, mynewSocket, myThread.getId()));
 			
         } catch (IOException | NotATypeException e1 ) {
             e1.printStackTrace();
@@ -49,7 +49,7 @@ public class DresseurHandler implements Runnable{
 				{
 					System.out.println("Client " + this.mynewSocket + " sends exit...");
 					System.out.println("Connection closing...");
-                    Arene.removeDresseur(myThread.threadId());
+                    Arene.removeDresseur(myThread.getId());
 					this.mynewSocket.close();
 					System.out.println("Closed");
 					break;
@@ -60,7 +60,7 @@ public class DresseurHandler implements Runnable{
 					case 1 :
 						stringToReturn = "Quel dresseur veux tu affronter?";
                         ournewDataOutputstream.writeUTF(stringToReturn);
-						long idD1 = myThread.threadId();
+						long idD1 = myThread.getId();
 						long idD2 = ournewDataInputstream.readLong();
 						if (Arene.getDresseurs().containsKey(idD2)){
 							Arene.getDresseurs().get(idD1).setEnCombat(true);

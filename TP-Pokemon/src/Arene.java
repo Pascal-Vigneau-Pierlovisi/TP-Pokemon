@@ -48,11 +48,10 @@ public class Arene
 		return dresseurs;
 	}
 	public static void setDresseurs(Dresseur dresseur) {
-		dresseurs.put((long) dresseurs.size(), dresseur);
+		dresseurs.put(dresseur.getId(), dresseur);
 	}
 
-	public static void removeDresseur(long cle) {
-		for (long id : dresseurs.)
+	public static void removeDresseur(long idDresseur) {
 		dresseurs.remove(idDresseur);
 	}
 	
