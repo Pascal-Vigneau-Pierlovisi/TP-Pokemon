@@ -2,19 +2,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 
-public class DresseurHandler extends Thread{
+public class DresseurHandler implements Runnable{
 
 	final DataInputStream ournewDataInputstream;
 	final DataOutputStream ournewDataOutputstream;
 	final Socket mynewSocket;
 	private String pseudoRecu;
+	private Thread myThread;
     
 	
 
@@ -24,6 +19,8 @@ public class DresseurHandler extends Thread{
 		this.mynewSocket = mynewSocket;
 		this.ournewDataInputstream = ournewDataInputstream;
 		this.ournewDataOutputstream = ournewDataOutputstream;
+		myThread = new Thread(this);
+		myThread.start();
 	}
 
 	@Override
@@ -35,15 +32,16 @@ public class DresseurHandler extends Thread{
         try {
             ournewDataOutputstream.writeUTF("Votre pseudo?");
             pseudoRecu = ournewDataInputstream.readUTF();
+			Arene.setDresseurs(new Dresseur(pseudoRecu, mynewSocket, myThread.threadId()));
 			
-        } catch (IOException /*| NotATypeException */e1 ) {
+        } catch (IOException | NotATypeException e1 ) {
             e1.printStackTrace();
         }
 		while (true)
 		{
 			try {
 				ournewDataOutputstream.writeUTF("Choose 1: Duel; 2: Liste de dresseur; 3. Lootboxing\n"+
-							"Ou 3. Partir");	
+							"Ou 4. Partir");	
 				// reponse d'un client
 				receivedInt = ournewDataInputstream.readInt();
 
@@ -51,7 +49,7 @@ public class DresseurHandler extends Thread{
 				{
 					System.out.println("Client " + this.mynewSocket + " sends exit...");
 					System.out.println("Connection closing...");
-                    //dresseurs.remove();
+                    Arene.removeDresseur(myThread.threadId());
 					this.mynewSocket.close();
 					System.out.println("Closed");
 					break;
@@ -62,17 +60,23 @@ public class DresseurHandler extends Thread{
 					case 1 :
 						stringToReturn = "Quel dresseur veux tu affronter?";
                         ournewDataOutputstream.writeUTF(stringToReturn);
-                        try {
-							int idAdv = ournewDataInputstream.readInt();
-                            //dresseurs.get(id).duel(idAdv);
-                        } catch (Exception e) {
-                            // TODO: handle exception
-                        }
+						long idD1 = myThread.threadId();
+						long idD2 = ournewDataInputstream.readLong();
+						if (Arene.getDresseurs().containsKey(idD2)){
+							Arene.getDresseurs().get(idD1).setEnCombat(true);
+							Arene.getDresseurs().get(idD2).setEnCombat(true);
+							myThread.interrupt();
+							while(Arene.getDresseurs().get(idD1).getEnCombat() == true){
+								Combat combat = new Combat(Arene.getDresseurs().get(idD1), Arene.getDresseurs().get(idD2), mynewSocket, ournewDataInputstream, ournewDataOutputstream);
+							}
+						
+						}
 						break;
 						
 					case 2 :
 						stringToReturn = Arene.getDresseurs().toString();
                         ournewDataOutputstream.writeUTF(stringToReturn);
+						
 						break;
 					case 3 :
                         break;
@@ -96,6 +100,8 @@ public class DresseurHandler extends Thread{
 		}
 	}
 
+	//Getters
+
 	public DataInputStream getOurnewDataInputstream() {
 		return ournewDataInputstream;
 	}
@@ -112,6 +118,11 @@ public class DresseurHandler extends Thread{
 		return pseudoRecu;
 	}
 
+	public Thread getMyThread() {
+		return myThread;
+	}
+
+	//Stter
 	public void setPseudoRecu(String pseudoRecu) {
 		this.pseudoRecu = pseudoRecu;
 	}

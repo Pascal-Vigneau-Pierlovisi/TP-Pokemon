@@ -19,14 +19,18 @@ public class Dresseur
     private List<Pokemon> equipe = new ArrayList<>();
     private long id;
     private int ticket;
+    private boolean enCombat;
+    private Socket mySocket;
     Scanner ourNewscanner = new Scanner(System.in);
 
-    public Dresseur(String nPseudo, long l) throws NotATypeException{
+    public Dresseur(String nPseudo, Socket nMySocket, long nID) throws NotATypeException{
         pseudo = nPseudo;
         ticket = 0;
-        id = l;
+        mySocket = nMySocket;
+        enCombat = false;
         Pokemon pokemon = new Pokemon();
         equipe.add(pokemon);
+        id = nID;
     }
 
     public static void main(String[] args) throws IOException
@@ -57,7 +61,7 @@ public class Dresseur
                     ournewDataOutputstream.writeLong(dresseurAdv);
                 }
                 // Sortir de la boucle while doit être quand un client rentre Exit.
-                if(tosend == 3)
+                if(tosend == 4)
                 {
                     System.out.println("Connection closing... : " + ournewsocket);
                     ournewsocket.close();
@@ -83,6 +87,14 @@ public class Dresseur
         return id;
     }
 
+    public boolean getEnCombat(){
+        return enCombat;
+    }
+
+    public int getTicket() {
+        return ticket;
+    }
+
     public String getPseudo() {
         return pseudo;
     }
@@ -90,10 +102,19 @@ public class Dresseur
     public List<Pokemon> getEquipe() {
             return equipe;
     }
+
+    public Socket getMySocket() {
+        return mySocket;
+    }
+
     
     //Setter
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
+    }
+
+    public void setEnCombat(boolean enCombat) {
+        this.enCombat = enCombat;
     }
 
     public void setEquipe(List<Pokemon> equipe) {
@@ -132,7 +153,12 @@ public class Dresseur
     }
 
     public Attaque choisirAttaquePokemon(Pokemon lePokemon){
-
+        System.out.println("Quelle attaque utilisée? 1: " + lePokemon.getLesAttaques().get(0) +
+                                                    "2: " + lePokemon.getLesAttaques().get(1) +
+                                                    "3: " + lePokemon.getLesAttaques().get(2) + 
+                                                    "4: " + lePokemon.getLesAttaques().get(3));
+        int lAttaque = ourNewscanner.nextInt();        
+        return lePokemon.getLesAttaques().get(lAttaque);
     }
 
     @Override

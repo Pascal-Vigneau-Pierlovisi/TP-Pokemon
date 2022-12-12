@@ -1,5 +1,6 @@
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -14,7 +15,7 @@ public class Pokemon{
     private double defSpeBase;
     private double vitesseBase;
     private ArrayList<String> lst_types = new ArrayList<>();
-    private ArrayList<Attaque> lesAttaques = new ArrayList<>();
+    private ArrayList<Attaque> lesAttaques = new ArrayList<>(Arrays.asList(null, null, null, null));
     private Types_Poke listTypes = new Types_Poke();
     private int niveau = 1;
     private int pv = (int) (2 * pvBase * niveau/15 + 10 + niveau);
@@ -54,49 +55,92 @@ public class Pokemon{
             lst_types.add((String)pokedex.getPokedex().get(numPokedex).get(4));
         }
         for(String type : this.getLst_types()){
-            switch(type){
-                case "FIRE":
-                    lesAttaques.add(new Attaque("Flammeche", "Special", 100, 40, "FIRE", listTypes.getListType()));
-                    break;
-                case "NORMAL":
-                    lesAttaques.add(new Attaque("Charge", "Physique", 100, 40, "NORMAL", listTypes.getListType()));
-                    break;
-                case "WATER":
-                    lesAttaques.add(new Attaque("Pistolet à O", "Special", 100, 40, "WATER", listTypes.getListType()));
-                    break;
-                case "POISON":
-                    lesAttaques.add(new Attaque("Dard-Venin", "Physique", 100, 40, "POISON", listTypes.getListType()));
-                    break;    
-                case "PLANT":
-                    lesAttaques.add(new Attaque("Fouet liane", "Physique", 100, 40, "PLANT", listTypes.getListType()));
-                    break;
-                case "ELECTRIC":
-                    lesAttaques.add(new Attaque("Eclair", "Special", 100, 40, "ELECTRIC", listTypes.getListType()));
-                    break;
-                case "GROUND":
-                    lesAttaques.add(new Attaque("Coud'Boue", "Special", 100, 20, "GROUND", listTypes.getListType()));
-                    break;
-                case "DRAGON":
-                    lesAttaques.add(new Attaque("Draco-Souffle", "Special", 100, 60, "DRAGON", listTypes.getListType()));
-                    break;
-                case "ICE":
-                    lesAttaques.add(new Attaque("Eclat-glace", "Physique", 100, 40, "ICE", listTypes.getListType()));
-                    break;
-                case "FLYING":
-                    lesAttaques.add(new Attaque("Picpic", "Physique", 100, 35, "FLYING", listTypes.getListType()));
-                    break;
-                case "PSYCHIC":
-                    lesAttaques.add(new Attaque("Choc Mental", "Special", 100, 50, "PSYCHIC", listTypes.getListType()));
-                    break;
-                case "COMBAT":
-                    lesAttaques.add(new Attaque("Eclate-Roc", "Physique", 100, 40, "COMBAT", listTypes.getListType()));
-                    break;
-                case "BUG":
-                    lesAttaques.add(new Attaque("Dard-Nuée", "Physique", 100, 40, "BUG", listTypes.getListType()));
-                    break;
+            if(lesAttaques.get(0) == null){
+                switch(type){
+                    case "FIRE":
+                        lesAttaques.set(0, new Attaque("Flammeche", "Special", 100, 40, "FIRE", listTypes.getListType())); 
+                        break;
+                    case "NORMAL":
+                        lesAttaques.set(0, new Attaque("Charge", "Physique", 100, 40, "NORMAL", listTypes.getListType()));
+                        break;
+                    case "WATER":
+                        lesAttaques.set(0, new Attaque("Pistolet à O", "Special", 100, 40, "WATER", listTypes.getListType()));
+                        break;
+                    case "POISON":
+                        lesAttaques.set(0, new Attaque("Dard-Venin", "Physique", 100, 40, "POISON", listTypes.getListType()));
+                        break;    
+                    case "PLANT":
+                        lesAttaques.set(0, new Attaque("Fouet liane", "Physique", 100, 40, "PLANT", listTypes.getListType()));
+                        break;
+                    case "ELECTRIC":
+                        lesAttaques.set(0, new Attaque("Eclair", "Special", 100, 40, "ELECTRIC", listTypes.getListType()));
+                        break;
+                    case "GROUND":
+                        lesAttaques.set(0, new Attaque("Coud'Boue", "Special", 100, 20, "GROUND", listTypes.getListType()));
+                        break;
+                    case "DRAGON":
+                        lesAttaques.set(0, new Attaque("Draco-Souffle", "Special", 100, 60, "DRAGON", listTypes.getListType()));
+                        break;
+                    case "ICE":
+                        lesAttaques.set(0, new Attaque("Eclat-glace", "Physique", 100, 40, "ICE", listTypes.getListType()));
+                        break;
+                    case "FLYING":
+                        lesAttaques.set(0, new Attaque("Picpic", "Physique", 100, 35, "FLYING", listTypes.getListType()));
+                        break;
+                    case "PSYCHIC":
+                        lesAttaques.set(0, new Attaque("Choc Mental", "Special", 100, 50, "PSYCHIC", listTypes.getListType()));
+                        break;
+                    case "COMBAT":
+                        lesAttaques.set(0, new Attaque("Eclate-Roc", "Physique", 100, 40, "COMBAT", listTypes.getListType()));
+                        break;
+                    case "BUG":
+                        lesAttaques.set(0, new Attaque("Dard-Nuée", "Physique", 100, 40, "BUG", listTypes.getListType()));
+                        break;
+                }
+            } else{
+                switch(type){
+                    case "FIRE":
+                        lesAttaques.set(1, new Attaque("Flammeche", "Special", 100, 40, "FIRE", listTypes.getListType())); 
+                        break;
+                    case "NORMAL":
+                        lesAttaques.set(1, new Attaque("Charge", "Physique", 100, 40, "NORMAL", listTypes.getListType()));
+                        break;
+                    case "WATER":
+                        lesAttaques.set(1, new Attaque("Pistolet à O", "Special", 100, 40, "WATER", listTypes.getListType()));
+                        break;
+                    case "POISON":
+                        lesAttaques.set(1, new Attaque("Dard-Venin", "Physique", 100, 40, "POISON", listTypes.getListType()));
+                        break;    
+                    case "PLANT":
+                        lesAttaques.set(1, new Attaque("Fouet liane", "Physique", 100, 40, "PLANT", listTypes.getListType()));
+                        break;
+                    case "ELECTRIC":
+                        lesAttaques.set(1, new Attaque("Eclair", "Special", 100, 40, "ELECTRIC", listTypes.getListType()));
+                        break;
+                    case "GROUND":
+                        lesAttaques.set(1, new Attaque("Coud'Boue", "Special", 100, 20, "GROUND", listTypes.getListType()));
+                        break;
+                    case "DRAGON":
+                        lesAttaques.set(1, new Attaque("Draco-Souffle", "Special", 100, 60, "DRAGON", listTypes.getListType()));
+                        break;
+                    case "ICE":
+                        lesAttaques.set(1, new Attaque("Eclat-glace", "Physique", 100, 40, "ICE", listTypes.getListType()));
+                        break;
+                    case "FLYING":
+                        lesAttaques.set(1, new Attaque("Picpic", "Physique", 100, 35, "FLYING", listTypes.getListType()));
+                        break;
+                    case "PSYCHIC":
+                        lesAttaques.set(1, new Attaque("Choc Mental", "Special", 100, 50, "PSYCHIC", listTypes.getListType()));
+                        break;
+                    case "COMBAT":
+                        lesAttaques.set(1, new Attaque("Eclate-Roc", "Physique", 100, 40, "COMBAT", listTypes.getListType()));
+                        break;
+                    case "BUG":
+                        lesAttaques.set(1, new Attaque("Dard-Nuée", "Physique", 100, 40, "BUG", listTypes.getListType()));
+                        break;
+                }
             }
         }
-        
         
     }
 
@@ -245,6 +289,9 @@ public class Pokemon{
         this.lesAttaques = lesAttaques;
     }
 
+    public void setKo(boolean ko) {
+        this.ko = ko;
+    }
 
     //toString
     @Override
@@ -271,46 +318,133 @@ public class Pokemon{
             }
             if((boolean) pokedex.getPokedex().get(numPokedex).get(2)) {
                 for(String type : this.getLst_types()){
-                    switch(type){
-                        case "FIRE":
-                            lesAttaques.add(new Attaque("Lance-Flamme", "Special", 100, 80, "FIRE", listTypes.getListType()));
-                            break;
-                        case "NORMAL":
-                            lesAttaques.add(new Attaque("Attrition", "Physique", 100, 70, "NORMAL", listTypes.getListType()));
-                            break;
-                        case "WATER":
-                            lesAttaques.add(new Attaque("Bulle d'O", "Special", 100, 60, "WATER", listTypes.getListType()));
-                            break;
-                        case "POISON":
-                            lesAttaques.add(new Attaque("Choc Venin", "Physique", 100, 65, "POISON", listTypes.getListType()));
-                            break;    
-                        case "PLANT":
-                            lesAttaques.add(new Attaque("Feuille Magic", "Special", 1000, 60, "PLANT", listTypes.getListType()));
-                            break;
-                        case "ELECTRIC":
-                            lesAttaques.add(new Attaque("Etincelle", "Physique", 100, 60, "ELECTRIC", listTypes.getListType()));
-                            break;
-                        case "GROUND":
-                            lesAttaques.add(new Attaque("Pietisol", "Physique", 100, 60, "GROUND", listTypes.getListType()));
-                            break;
-                        case "DRAGON":
-                            lesAttaques.add(new Attaque("Draco-Griffe", "Physique", 100, 80, "DRAGON", listTypes.getListType()));
-                            break;
-                        case "ICE":
-                            lesAttaques.add(new Attaque("Onde Boréale", "Special", 100, 65, "ICE", listTypes.getListType()));
-                            break;
-                        case "FLYING":
-                            lesAttaques.add(new Attaque("Cru-aile", "Physique", 100, 60, "FLYING", listTypes.getListType()));
-                            break;
-                        case "PSYCHIC":
-                            lesAttaques.add(new Attaque("Coupe Psycho", "Physique", 100, 70, "PSYCHIC", listTypes.getListType()));
-                            break;
-                        case "COMBAT":
-                            lesAttaques.add(new Attaque("Balayette", "Physique", 100, 60, "COMBAT", listTypes.getListType()));
-                            break;
-                        case "BUG":
-                            lesAttaques.add(new Attaque("Rayon Signal", "Special", 100, 75, "BUG", listTypes.getListType()));
-                            break;
+                    if(lesAttaques.get(1) == null){
+                        switch(type){
+                            case "FIRE":
+                                lesAttaques.set(1, new Attaque("Lance-Flamme", "Special", 100, 80, "FIRE", listTypes.getListType()));
+                                break;
+                            case "NORMAL":
+                                lesAttaques.set(1, new Attaque("Attrition", "Physique", 100, 70, "NORMAL", listTypes.getListType()));
+                                break;
+                            case "WATER":
+                                lesAttaques.set(1, new Attaque("Bulle d'O", "Special", 100, 60, "WATER", listTypes.getListType()));
+                                break;
+                            case "POISON":
+                                lesAttaques.set(1, new Attaque("Choc Venin", "Physique", 100, 65, "POISON", listTypes.getListType()));
+                                break;    
+                            case "PLANT":
+                                lesAttaques.set(1, new Attaque("Feuille Magic", "Special", 1000, 60, "PLANT", listTypes.getListType()));
+                                break;
+                            case "ELECTRIC":
+                                lesAttaques.set(1, new Attaque("Etincelle", "Physique", 100, 60, "ELECTRIC", listTypes.getListType()));
+                                break;
+                            case "GROUND":
+                                lesAttaques.set(1, new Attaque("Pietisol", "Physique", 100, 60, "GROUND", listTypes.getListType()));
+                                break;
+                            case "DRAGON":
+                                lesAttaques.set(1, new Attaque("Draco-Griffe", "Physique", 100, 80, "DRAGON", listTypes.getListType()));
+                                break;
+                            case "ICE":
+                                lesAttaques.set(1, new Attaque("Onde Boréale", "Special", 100, 65, "ICE", listTypes.getListType()));
+                                break;
+                            case "FLYING":
+                                lesAttaques.set(1, new Attaque("Cru-aile", "Physique", 100, 60, "FLYING", listTypes.getListType()));
+                                break;
+                            case "PSYCHIC":
+                                lesAttaques.set(1, new Attaque("Coupe Psycho", "Physique", 100, 70, "PSYCHIC", listTypes.getListType()));
+                                break;
+                            case "COMBAT":
+                                lesAttaques.set(1, new Attaque("Balayette", "Physique", 100, 60, "COMBAT", listTypes.getListType()));
+                                break;
+                            case "BUG":
+                                lesAttaques.set(1, new Attaque("Rayon Signal", "Special", 100, 75, "BUG", listTypes.getListType()));
+                                break;
+                        }
+                    
+                    } else if(lesAttaques.get(2) == null){
+                        switch(type){
+                            case "FIRE":
+                                lesAttaques.set(2, new Attaque("Lance-Flamme", "Special", 100, 80, "FIRE", listTypes.getListType()));
+                                break;
+                            case "NORMAL":
+                                lesAttaques.set(2, new Attaque("Attrition", "Physique", 100, 70, "NORMAL", listTypes.getListType()));
+                                break;
+                            case "WATER":
+                                lesAttaques.set(2, new Attaque("Bulle d'O", "Special", 100, 60, "WATER", listTypes.getListType()));
+                                break;
+                            case "POISON":
+                                lesAttaques.set(2, new Attaque("Choc Venin", "Physique", 100, 65, "POISON", listTypes.getListType()));
+                                break;    
+                            case "PLANT":
+                                lesAttaques.set(2, new Attaque("Feuille Magic", "Special", 1000, 60, "PLANT", listTypes.getListType()));
+                                break;
+                            case "ELECTRIC":
+                                lesAttaques.set(2, new Attaque("Etincelle", "Physique", 100, 60, "ELECTRIC", listTypes.getListType()));
+                                break;
+                            case "GROUND":
+                                lesAttaques.set(2, new Attaque("Pietisol", "Physique", 100, 60, "GROUND", listTypes.getListType()));
+                                break;
+                            case "DRAGON":
+                                lesAttaques.set(2, new Attaque("Draco-Griffe", "Physique", 100, 80, "DRAGON", listTypes.getListType()));
+                                break;
+                            case "ICE":
+                                lesAttaques.set(2, new Attaque("Onde Boréale", "Special", 100, 65, "ICE", listTypes.getListType()));
+                                break;
+                            case "FLYING":
+                                lesAttaques.set(2, new Attaque("Cru-aile", "Physique", 100, 60, "FLYING", listTypes.getListType()));
+                                break;
+                            case "PSYCHIC":
+                                lesAttaques.set(2, new Attaque("Coupe Psycho", "Physique", 100, 70, "PSYCHIC", listTypes.getListType()));
+                                break;
+                            case "COMBAT":
+                                lesAttaques.set(2, new Attaque("Balayette", "Physique", 100, 60, "COMBAT", listTypes.getListType()));
+                                break;
+                            case "BUG":
+                                lesAttaques.set(2, new Attaque("Rayon Signal", "Special", 100, 75, "BUG", listTypes.getListType()));
+                                break;
+                        }
+                    }else{
+                        switch(type){
+                            case "FIRE":
+                                lesAttaques.set(3, new Attaque("Lance-Flamme", "Special", 100, 80, "FIRE", listTypes.getListType()));
+                                break;
+                            case "NORMAL":
+                                lesAttaques.set(3, new Attaque("Attrition", "Physique", 100, 70, "NORMAL", listTypes.getListType()));
+                                break;
+                            case "WATER":
+                                lesAttaques.set(3, new Attaque("Bulle d'O", "Special", 100, 60, "WATER", listTypes.getListType()));
+                                break;
+                            case "POISON":
+                                lesAttaques.set(3, new Attaque("Choc Venin", "Physique", 100, 65, "POISON", listTypes.getListType()));
+                                break;    
+                            case "PLANT":
+                                lesAttaques.set(3, new Attaque("Feuille Magic", "Special", 1000, 60, "PLANT", listTypes.getListType()));
+                                break;
+                            case "ELECTRIC":
+                                lesAttaques.set(3, new Attaque("Etincelle", "Physique", 100, 60, "ELECTRIC", listTypes.getListType()));
+                                break;
+                            case "GROUND":
+                                lesAttaques.set(3, new Attaque("Pietisol", "Physique", 100, 60, "GROUND", listTypes.getListType()));
+                                break;
+                            case "DRAGON":
+                                lesAttaques.set(3, new Attaque("Draco-Griffe", "Physique", 100, 80, "DRAGON", listTypes.getListType()));
+                                break;
+                            case "ICE":
+                                lesAttaques.set(3, new Attaque("Onde Boréale", "Special", 100, 65, "ICE", listTypes.getListType()));
+                                break;
+                            case "FLYING":
+                                lesAttaques.set(3, new Attaque("Cru-aile", "Physique", 100, 60, "FLYING", listTypes.getListType()));
+                                break;
+                            case "PSYCHIC":
+                                lesAttaques.set(3, new Attaque("Coupe Psycho", "Physique", 100, 70, "PSYCHIC", listTypes.getListType()));
+                                break;
+                            case "COMBAT":
+                                lesAttaques.set(3, new Attaque("Balayette", "Physique", 100, 60, "COMBAT", listTypes.getListType()));
+                                break;
+                            case "BUG":
+                                lesAttaques.set(3, new Attaque("Rayon Signal", "Special", 100, 75, "BUG", listTypes.getListType()));
+                                break;
+                        }
                     }
                 }
             }

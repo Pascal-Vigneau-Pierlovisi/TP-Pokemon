@@ -33,23 +33,10 @@ public class Arene
                 // obtaining input and out streams
 				DataInputStream ournewDataInputstream = new DataInputStream(mynewSocket.getInputStream());
 				DataOutputStream ournewDataOutputstream = new DataOutputStream(mynewSocket.getOutputStream());
-				
 				System.out.println("Thread assigned");
 
-				Thread myThread = new DresseurHandler(mynewSocket, ournewDataInputstream, ournewDataOutputstream);
-				// starting
-				myThread.start();
-				String pseudo = ournewDataInputstream.readUTF();
-				dresseurs.put(myThread.threadId(), new Dresseur(pseudo, myThread.threadId()));
-				if (ournewDataInputstream.readInt() == 1){
-					long idAdv = ournewDataInputstream.readLong();
-					if (dresseurs.containsKey(idAdv)){
-						Combat combat = new Combat(dresseurs.get(myThread.threadId()), dresseurs.get(idAdv), mynewSocket, ournewDataInputstream, ournewDataOutputstream);
-						combat.start();
-					}
-				}
-
-				
+				DresseurHandler myThread = new DresseurHandler(mynewSocket, ournewDataInputstream, ournewDataOutputstream);	
+				System.out.println("Thread assigned");	
 			}
 			catch (Exception e){
 				mynewSocket.close();
@@ -60,9 +47,13 @@ public class Arene
 	public static Map<Long, Dresseur> getDresseurs() {
 		return dresseurs;
 	}
-	public static void setDresseurs(Map<Long, Dresseur> dresseurs) {
-		Arene.dresseurs = dresseurs;
+	public static void setDresseurs(Dresseur dresseur) {
+		dresseurs.put((long) dresseurs.size(), dresseur);
 	}
 
+	public static void removeDresseur(long cle) {
+		for (long id : dresseurs.)
+		dresseurs.remove(idDresseur);
+	}
 	
 }
