@@ -48,6 +48,8 @@ public class Combat implements Runnable{
                             dresseur1.choisirAttaquePokemon(combattant);
                             choix = true;
                         }
+                    } else {
+                        dresseur1.changerPokemon();
                     }
                 } catch (IOException e) {
                     // TODO Auto-generated catch block

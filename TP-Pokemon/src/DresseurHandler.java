@@ -32,6 +32,7 @@ public class DresseurHandler implements Runnable{
         try {
             ournewDataOutputstream.writeUTF("Votre pseudo?");
             pseudoRecu = ournewDataInputstream.readUTF();
+			//if(pseudoRecu)
 			Arene.setDresseurs(new Dresseur(pseudoRecu, mynewSocket, myThread.getId()));
 			
         } catch (IOException | NotATypeException e1 ) {
@@ -58,15 +59,14 @@ public class DresseurHandler implements Runnable{
 				switch (receivedInt) {
 				
 					case 1 :
-						stringToReturn = "Quel dresseur veux tu affronter?";
+						stringToReturn = "Quel dresseur veux tu affronter(Rentrer l'ID)?";
                         ournewDataOutputstream.writeUTF(stringToReturn);
 						long idD1 = myThread.getId();
 						long idD2 = ournewDataInputstream.readLong();
 						if (Arene.getDresseurs().containsKey(idD2)){
 							Arene.getDresseurs().get(idD1).setEnCombat(true);
 							Arene.getDresseurs().get(idD2).setEnCombat(true);
-							myThread.interrupt();
-							while(Arene.getDresseurs().get(idD1).getEnCombat() == true){
+							if(Arene.getDresseurs().get(idD1).getEnCombat() == true){
 								Combat combat = new Combat(Arene.getDresseurs().get(idD1), Arene.getDresseurs().get(idD2), mynewSocket, ournewDataInputstream, ournewDataOutputstream);
 							}
 						
