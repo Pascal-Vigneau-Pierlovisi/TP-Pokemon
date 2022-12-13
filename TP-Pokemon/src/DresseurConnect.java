@@ -20,53 +20,60 @@ public class DresseurConnect {
             System.out.println(ournewDataInputstream.readUTF());
             String pseudoToSend = ourNewscanner.nextLine();
             ournewDataOutputstream.writeUTF(pseudoToSend);
+                
             Dresseur dresseurActuel = null;
-            for (Dresseur dresseur : Arene.getDresseurs().values()){
-                if (dresseur.getMySocket().equals(ournewsocket)){
-                    dresseurActuel = dresseur;
+            
+            while(dresseurActuel==null)
+            {
+                for (Dresseur dresseur : Arene.getDresseurs().values()){
+                    if (dresseur.getId() == ){
+                        dresseurActuel = dresseur;
+                    }
                 }
             }
+            System.out.println("hého");
             while (true)
             {
-                while(Arene.getDresseurs().get(dresseurActuel.getId()).equals(null))
-                {
-                    System.out.println(ournewDataInputstream.readUTF());
+                System.out.println(ournewDataInputstream.readUTF());
                     int tosend = ourNewscanner.nextInt();
                     ournewDataOutputstream.writeInt(tosend);
-                }
-                while(!Arene.getDresseurs().get(dresseurActuel.getId()).getEnCombat())
                     
-                    if(tosend == 1)
-                    {
-                        System.out.println(ournewDataInputstream.readUTF());
-                        long dresseurAdv = ourNewscanner.nextLong();
-                        ournewDataOutputstream.writeLong(dresseurAdv);
-                    }
-                    // Sortir de la boucle while doit être quand un client rentre Exit.
-                    if(tosend == 4)
-                    {
-                        System.out.println("Connection closing... : " + ournewsocket);
-                        ournewsocket.close();
-                        System.out.println("Closed");
-                        break;
-                    }
-                    
-                    String newresuiltReceivedString = ournewDataInputstream.readUTF();
-                    System.out.println(newresuiltReceivedString);
-                }
                 
+                if(tosend == 1)
+                {
+                    System.out.println(ournewDataInputstream.readUTF());
+                    long dresseurAdv = ourNewscanner.nextLong();
+                    ournewDataOutputstream.writeLong(dresseurAdv);
+                }
+                // Sortir de la boucle while doit être quand un client rentre Exit.
+                if(tosend == 4)
+                {
+                    System.out.println("Connection closing... : " + ournewsocket);
+                    ournewsocket.close();
+                    System.out.println("Closed");
+                    break;
+                }
+                    
+                String newresuiltReceivedString = ournewDataInputstream.readUTF();
+                System.out.println(newresuiltReceivedString);
+                while(!Arene.getDresseurs().get(dresseurActuel.getId()).getEnCombat())
+                {
+
+                }
                 while(Arene.getDresseurs().get(dresseurActuel.getId()).getEnCombat()){
                     ournewsocket = new Socket(inetadress, 19000);
                     ournewDataInputstream = new DataInputStream(ournewsocket.getInputStream());
                     ournewDataOutputstream = new DataOutputStream(ournewsocket.getOutputStream());
                 }
-                ourNewscanner.close();
-                ournewDataInputstream.close();
-                ournewDataOutputstream.close();
-            }
-            
+
+            }     
+                
+        ourNewscanner.close();
+        ournewDataInputstream.close();
+        ournewDataOutputstream.close();
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 }
+

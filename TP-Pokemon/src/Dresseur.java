@@ -16,13 +16,11 @@ public class Dresseur
     private long id;
     private int ticket;
     private boolean enCombat;
-    private Socket mySocket;
     
 
-    public Dresseur(String nPseudo, Socket nMySocket, long nID) throws NotATypeException{
+    public Dresseur(String nPseudo, long nID) throws NotATypeException{
         pseudo = nPseudo;
         ticket = 0;
-        mySocket = nMySocket;
         enCombat = false;
         Pokemon pokemon = new Pokemon();
         equipe.add(pokemon);
@@ -51,9 +49,6 @@ public class Dresseur
             return equipe;
     }
 
-    public Socket getMySocket() {
-        return mySocket;
-    }
 
     
     //Setter

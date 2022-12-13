@@ -35,7 +35,7 @@ public class DresseurHandler implements Runnable{
             ournewDataOutputstream.writeUTF("Votre pseudo?");
             pseudoRecu = ournewDataInputstream.readUTF();
 			//if(pseudoRecu)
-			Arene.setDresseurs(new Dresseur(pseudoRecu, mynewSocket, myThread.getId()));
+			Arene.setDresseurs(new Dresseur(pseudoRecu, myThread.getId()));
 			
         } catch (IOException | NotATypeException e1 ) {
             e1.printStackTrace();
