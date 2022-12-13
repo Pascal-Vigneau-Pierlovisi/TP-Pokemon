@@ -26,7 +26,7 @@ public class Pokemon implements Serializable{
     private int defSpe = (int) (2 * defSpeBase * niveau/15 + 10 + niveau);
     private int vitesse = (int) (2 * vitesseBase * niveau/15 + 10 + niveau);
     private boolean ko;
-    private Pokedex pokedex = new Pokedex(new File("./csv/kanto.xlsx"));
+    private Pokedex pokedex = new Pokedex(new File("/Users/pascalvigneau/Desktop/L3/Programmation - Orientée - Objet/TP-2/TP-Pokemon/TP-Pokemon/csv/kanto.xlsx"));
     
     Random r = new Random();
     

@@ -4,7 +4,7 @@ public class App {
         Dresseur dresseur = new Dresseur("TheTrlol", 1999);
         Save save = new Save();
         save.transToFolder(dresseur);
-        save.readToFolder();
+        save.readToFolder("TheTrlol");
     }
 }
 

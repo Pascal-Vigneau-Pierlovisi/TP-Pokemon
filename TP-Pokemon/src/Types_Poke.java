@@ -25,7 +25,7 @@ public class Types_Poke implements Serializable {
     public Types_Poke(){
         {
             try {
-                FileInputStream file = new FileInputStream(new File("./csv/Pokemon_Type_Chart.xlsx"));
+                FileInputStream file = new FileInputStream(new File("/Users/pascalvigneau/Desktop/L3/Programmation - Orientée - Objet/TP-2/TP-Pokemon/TP-Pokemon/csv/Pokemon_Type_Chart.xlsx"));
                 try (Workbook workbook = new XSSFWorkbook(file)) {
                     Sheet sheet = workbook.getSheetAt(0);
                     int i = 0;
