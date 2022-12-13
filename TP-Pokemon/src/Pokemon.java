@@ -1,10 +1,11 @@
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Pokemon{
+public class Pokemon implements Serializable{
 
     private String nom;
     private int numPokedex;
@@ -25,7 +26,7 @@ public class Pokemon{
     private int defSpe = (int) (2 * defSpeBase * niveau/15 + 10 + niveau);
     private int vitesse = (int) (2 * vitesseBase * niveau/15 + 10 + niveau);
     private boolean ko;
-    private Pokedex pokedex = new Pokedex(new File("./TP-Pokemon/csv/kanto.xlsx"));
+    private Pokedex pokedex = new Pokedex(new File("./csv/kanto.xlsx"));
     
     Random r = new Random();
     

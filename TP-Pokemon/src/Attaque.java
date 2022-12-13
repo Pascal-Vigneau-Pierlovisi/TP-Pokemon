@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.List;
 
-public class Attaque{
+public class Attaque implements Serializable{
 
     private String nom;
     private String genre;
