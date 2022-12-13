@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class Types_Poke {
+public class Types_Poke implements Serializable {
 
     private Map<String, List<String>> efficacite = new HashMap<>();
     private Map<String, List<String>> peuEfficace = new HashMap<>();
@@ -24,7 +25,7 @@ public class Types_Poke {
     public Types_Poke(){
         {
             try {
-                FileInputStream file = new FileInputStream(new File("./TP-Pokemon/csv/Pokemon_Type_Chart.xlsx"));
+                FileInputStream file = new FileInputStream(new File("./csv/Pokemon_Type_Chart.xlsx"));
                 try (Workbook workbook = new XSSFWorkbook(file)) {
                     Sheet sheet = workbook.getSheetAt(0);
                     int i = 0;

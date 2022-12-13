@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.io.Serializable;
 import java.net.*;
 
 /*Classe qui va servir de Client pour la communication
@@ -9,7 +10,7 @@ import java.net.*;
 * se connecte à l'Arène puis pourra utiliser une méthode
 * combatPokemon(DresseurAdverse) pour demander un combat
 */
-public class Dresseur
+public class Dresseur implements Serializable
 {
     private String pseudo;
     private List<Pokemon> equipe = new ArrayList<>();
