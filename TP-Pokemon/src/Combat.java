@@ -1,6 +1,7 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +15,14 @@ public class Combat implements Runnable{
     private String vainqueur;
     final DataInputStream ournewDataInputstream;
 	final DataOutputStream ournewDataOutputstream;
-	final Socket mynewSocket;
+	final DatagramSocket mynewSocket;
     private Thread combatThread;
     
 
-    public Combat(Dresseur nD1, Dresseur nD2, Socket mynewSocket, DataInputStream ournewDataInputstream, DataOutputStream ournewDataOutputstream){
+    public Combat(Dresseur nD1, Dresseur nD2, DatagramSocket combatSocket, DataInputStream ournewDataInputstream, DataOutputStream ournewDataOutputstream){
         dresseur1 = nD1;
         dresseur2 = nD2;
-        this.mynewSocket = mynewSocket;
+        this.mynewSocket = combatSocket;
 		this.ournewDataInputstream = ournewDataInputstream;
 		this.ournewDataOutputstream = ournewDataOutputstream;
         combatThread = new Thread(this);
@@ -31,6 +32,8 @@ public class Combat implements Runnable{
     @Override
     public void run(){
 
+        Socket socketD1 = dresseur1.getMySocket();
+        Socket socketD2 = dresseur2.getMySocket(); 
         Scanner ourNewscanner = new Scanner(System.in);
         Pokemon combattant = dresseur1.choisirPremierPokemon();
         String stringToReturn;
@@ -40,11 +43,10 @@ public class Combat implements Runnable{
             while (AttOuChang == false){
                 try {
                     stringToReturn = "1. Attaquer ou 2. Changer de Pokemon?";
-                    ournewDataOutputstream.writeUTF(stringToReturn);
                     intReceived = ournewDataInputstream.readInt();
                     if (intReceived == 1){
                         boolean choix = false;
-                        while(choix = false){
+                        while(choix == false){
                             dresseur1.choisirAttaquePokemon(combattant);
                             choix = true;
                         }

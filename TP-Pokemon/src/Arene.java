@@ -34,7 +34,7 @@ public class Arene
 				System.out.println("Thread assigned");
 
 				DresseurHandler myThread = new DresseurHandler(mynewSocket, ournewDataInputstream, ournewDataOutputstream);	
-				System.out.println("Thread assigned");	
+				System.out.println("Thread assigned");
 			}
 			catch (Exception e){
 				mynewSocket.close();

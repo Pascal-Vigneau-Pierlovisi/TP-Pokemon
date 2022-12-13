@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.*;
 
 
-public class Save{
+public class Save implements Serializable{
     public Dresseur[] getDresseurs() {
         return dresseurs;
     }

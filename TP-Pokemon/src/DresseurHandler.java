@@ -1,6 +1,8 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class DresseurHandler implements Runnable{
@@ -64,10 +66,11 @@ public class DresseurHandler implements Runnable{
 						long idD1 = myThread.getId();
 						long idD2 = ournewDataInputstream.readLong();
 						if (Arene.getDresseurs().containsKey(idD2)){
+							DatagramSocket combatSocket = new DatagramSocket(19000);
 							Arene.getDresseurs().get(idD1).setEnCombat(true);
 							Arene.getDresseurs().get(idD2).setEnCombat(true);
 							if(Arene.getDresseurs().get(idD1).getEnCombat() == true){
-								Combat combat = new Combat(Arene.getDresseurs().get(idD1), Arene.getDresseurs().get(idD2), mynewSocket, ournewDataInputstream, ournewDataOutputstream);
+								Combat combat = new Combat(Arene.getDresseurs().get(idD1), Arene.getDresseurs().get(idD2), combatSocket, ournewDataInputstream, ournewDataOutputstream);
 							}
 						
 						}
