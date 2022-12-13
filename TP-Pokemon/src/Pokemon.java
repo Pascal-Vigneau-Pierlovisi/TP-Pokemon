@@ -28,7 +28,7 @@ public class Pokemon{
     private Pokedex pokedex = new Pokedex(new File("./TP-Pokemon/csv/kanto.xlsx"));
     
     Random r = new Random();
-    Scanner myObj = new Scanner(System.in);
+    
 
 
     // Constructeur
@@ -456,11 +456,13 @@ public class Pokemon{
      * Permet d'attaquer un autre pokémon dans un combat en ligne, calculant tout les dégâts infligés.
      */
     public void attaquer(Pokemon pokAdv){
+        Scanner myObj = new Scanner(System.in);
         int atkUtilise = myObj.nextInt();
         pokAdv.pv -= ((this.niveau * 0.4 + 2) * this.atk * this.lesAttaques.get(atkUtilise).getPuissance() / pokAdv.def * 50)
          * this.lesAttaques.get(atkUtilise).calculEfficacite(pokAdv) * this.lesAttaques.get(atkUtilise).calculResistance(pokAdv) * this.lesAttaques.get(atkUtilise).isNeutre(pokAdv);
         if (pokAdv.pv <= 0){
             pokAdv.ko = true;
         }
+        myObj.close();
     }
 }
