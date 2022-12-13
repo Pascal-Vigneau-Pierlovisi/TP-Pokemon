@@ -1,11 +1,7 @@
-
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import java.io.*;
 import java.net.*;
 
 /*Classe qui va servir de Client pour la communication
@@ -21,7 +17,7 @@ public class Dresseur
     private int ticket;
     private boolean enCombat;
     private Socket mySocket;
-    Scanner ourNewscanner = new Scanner(System.in);
+    
 
     public Dresseur(String nPseudo, Socket nMySocket, long nID) throws NotATypeException{
         pseudo = nPseudo;
@@ -87,29 +83,36 @@ public class Dresseur
     }
 
     public Pokemon choisirPremierPokemon(){
+        Scanner ourNewscanner = new Scanner(System.in);
         if (this.equipe.size() > 1){
             System.out.println("Qui commence le combat?\n" + this.equipe);
             int lePokemon = ourNewscanner.nextInt();
             Collections.swap(equipe, 0, lePokemon);
         }
+        ourNewscanner.close();
         System.out.println(this.equipe.get(0).getNom() + ", go!");
         return this.equipe.get(0);
     }
 
     public Pokemon changerPokemon(){
+        Scanner ourNewscanner = new Scanner(System.in);
         System.out.println("Revient " + this.equipe.get(0).getNom() + " !");
         int lePokemon = ourNewscanner.nextInt();
         Collections.swap(equipe, 0, lePokemon);
         System.out.println(this.equipe.get(0).getNom() + ", go!");
+        ourNewscanner.close();
         return this.equipe.get(0);
+        
     }
 
     public Attaque choisirAttaquePokemon(Pokemon lePokemon){
+        Scanner ourNewscanner = new Scanner(System.in);
         System.out.println("Quelle attaque utilisée? 1: " + lePokemon.getLesAttaques().get(0) +
                                                     "2: " + lePokemon.getLesAttaques().get(1) +
                                                     "3: " + lePokemon.getLesAttaques().get(2) + 
                                                     "4: " + lePokemon.getLesAttaques().get(3));
-        int lAttaque = ourNewscanner.nextInt();        
+        int lAttaque = ourNewscanner.nextInt();  
+        ourNewscanner.close();      
         return lePokemon.getLesAttaques().get(lAttaque);
     }
 

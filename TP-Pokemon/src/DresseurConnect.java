@@ -28,11 +28,13 @@ public class DresseurConnect {
             }
             while (true)
             {
-                while(!Arene.getDresseurs().get(dresseurActuel.getId()).getEnCombat())
+                while(Arene.getDresseurs().get(dresseurActuel.getId()).equals(null))
                 {
                     System.out.println(ournewDataInputstream.readUTF());
                     int tosend = ourNewscanner.nextInt();
                     ournewDataOutputstream.writeInt(tosend);
+                }
+                while(!Arene.getDresseurs().get(dresseurActuel.getId()).getEnCombat())
                     
                     if(tosend == 1)
                     {
