@@ -10,10 +10,8 @@ public class App {
         listDresseur.add(dresseur2);
         listDresseur.add(dresseur);
         Save save = new Save();
-        save.transToFolder(listDresseur);
-        save.readToFolder("Vietco");
+        save.transToFolder(dresseur);
         save.readToFolder("TheTrlol");
-
     }
 }
 

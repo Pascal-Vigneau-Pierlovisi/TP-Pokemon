@@ -11,23 +11,16 @@ public class Save implements Serializable{
     private Dresseur[] dresseurs;
     public Save(){}
 
-    public void transToFolder(ArrayList<Dresseur> dresseurs) throws IOException {
-        FileOutputStream fichier = new FileOutputStream("TP-Pokemon/csv/save.txt");
+    public void transToFolder(Dresseur dresseur) throws IOException {
+        FileOutputStream fichier = new FileOutputStream("./csv/" + dresseur.getPseudo() + ".txt");
         ObjectOutputStream flux = new ObjectOutputStream(fichier);
         flux.writeObject(dresseurs);
     }
 
     public Dresseur readToFolder(String pseudo) throws IOException, ClassNotFoundException {
-        FileInputStream fichier = new FileInputStream("TP-Pokemon/csv/save.txt");
+        FileInputStream fichier = new FileInputStream("./csv/" + pseudo + ".txt");
         ObjectInput flux = new ObjectInputStream(fichier);
-        Object listDresseur =  flux.readObject();
-        Dresseur objet = null;
-        for(Dresseur dresseur : (ArrayList<Dresseur>) listDresseur){
-            if(dresseur.getPseudo().equals(pseudo)){
-                objet = dresseur;
-            }
-        }
-        System.out.println(objet);
+        Dresseur objet =  (Dresseur) flux.readObject();
         return objet;
     }
 }
