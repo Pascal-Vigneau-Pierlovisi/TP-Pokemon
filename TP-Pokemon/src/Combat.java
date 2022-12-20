@@ -1,63 +1,102 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.net.ServerSocket;
+import java.nio.ByteBuffer;
 
-public class Combat implements Runnable{
+public class Combat extends ServerSocket implements Runnable {
     private Dresseur dresseur1;
     private Dresseur dresseur2;
-    private List<Pokemon> pokeKoD1 = new ArrayList<>();
-    private List<Pokemon> pokeKoD2 = new ArrayList<>();
     private String vainqueur;
-    final DataInputStream ournewDataInputstream;
-	final DataOutputStream ournewDataOutputstream;
-	final DatagramSocket mynewSocket;
+    final ByteBuffer buffer;
     private Thread combatThread;
-    
+    private boolean dresseursPret;
 
-    public Combat(Dresseur nD1, Dresseur nD2, DatagramSocket combatSocket, DataInputStream ournewDataInputstream, DataOutputStream ournewDataOutputstream){
+    public Combat(Dresseur nD1, Dresseur nD2, ByteBuffer nBuffer) throws IOException {
         dresseur1 = nD1;
         dresseur2 = nD2;
-        this.mynewSocket = combatSocket;
-		this.ournewDataInputstream = ournewDataInputstream;
-		this.ournewDataOutputstream = ournewDataOutputstream;
+        buffer = nBuffer;
         combatThread = new Thread(this);
         combatThread.start();
+        dresseursPret = false;
     }
 
     @Override
-    public void run(){
-
-        Socket socketD1 = dresseur1.getMySocket();
-        Socket socketD2 = dresseur2.getMySocket(); 
-        Scanner ourNewscanner = new Scanner(System.in);
-        Pokemon combattant = dresseur1.choisirPremierPokemon();
+    public void run() {
+        boolean AttOuChang = false;
         String stringToReturn;
         int intReceived;
-        while(vainqueur == null){
-            boolean AttOuChang = false;
-            while (AttOuChang == false){
-                try {
-                    stringToReturn = "1. Attaquer ou 2. Changer de Pokemon?";
-                    intReceived = ournewDataInputstream.readInt();
-                    if (intReceived == 1){
-                        boolean choix = false;
-                        while(choix == false){
-                            dresseur1.choisirAttaquePokemon(combattant);
-                            choix = true;
-                        }
-                    } else {
-                        dresseur1.changerPokemon();
+        Pokemon combattant1 = dresseur1.choisirPremierPokemon();
+        Pokemon combattant2 = dresseur2.choisirPremierPokemon();
+
+        while (AttOuChang == false) {
+            try {
+                stringToReturn = "1. Attaquer ou 2. Changer de Pokemon?";
+                intReceived = ournewDataInputstream.readInt();
+                if (intReceived == 1) {
+                    boolean choix = false;
+                    while (choix == false) {
+                        dresseur1.choisirAttaquePokemon(combattant1);
+                        dresseursPret = true;
                     }
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                } else {
+                    dresseur1.changerPokemon();
                 }
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
+
         }
     }
+
+    // Getters
+    public Dresseur getDresseur1() {
+        return dresseur1;
+    }
+
+    public Dresseur getDresseur2() {
+        return dresseur2;
+    }
+
+    public String getVainqueur() {
+        return vainqueur;
+    }
+
+    public DataInputStream getOurnewDataInputstream() {
+        return ournewDataInputstream;
+    }
+
+    public DataOutputStream getOurnewDataOutputstream() {
+        return ournewDataOutputstream;
+    }
+
+    public Thread getCombatThread() {
+        return combatThread;
+    }
+
+    public boolean isDresseursPret() {
+        return dresseursPret;
+    }
+
+    // Setters
+    public void setDresseur1(Dresseur dresseur1) {
+        this.dresseur1 = dresseur1;
+    }
+
+    public void setDresseur2(Dresseur dresseur2) {
+        this.dresseur2 = dresseur2;
+    }
+
+    public void setVainqueur(String vainqueur) {
+        this.vainqueur = vainqueur;
+    }
+
+    public void setCombatThread(Thread combatThread) {
+        this.combatThread = combatThread;
+    }
+
+    public void setDresseursPret(boolean dresseursPret) {
+        this.dresseursPret = dresseursPret;
+    }
+
 }

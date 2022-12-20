@@ -5,6 +5,7 @@
         "lib/**/*.jar",
         "c:\\Users\\Antony\\Downloads\\poi-bin-5.2.3-20220909/**/*.jar",
         "c:\\Users\\User\\Downloads\\poi-bin-5.2.3-20220909/**/*.jar",
-        "/Users/pascalvigneau/Desktop/L3/Programmation - Orientée - Objet/TP-2/poi-bin-5.2.3/**/*.jar"
+        "/Users/pascalvigneau/Desktop/L3/Programmation - Orientée - Objet/TP-2/poi-bin-5.2.3/**/*.jar",
+        "c:\\Users\\Antony\\Downloads\\jar_files/**/*.jar"
     ]
 }

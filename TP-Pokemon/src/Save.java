@@ -1,5 +1,6 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.io.*;
 
 
@@ -10,16 +11,23 @@ public class Save implements Serializable{
     private Dresseur[] dresseurs;
     public Save(){}
 
-    public void transToFolder(Dresseur dresseur) throws IOException {
-        FileOutputStream fichier = new FileOutputStream("./csv/save.txt");
+    public void transToFolder(ArrayList<Dresseur> dresseurs) throws IOException {
+        FileOutputStream fichier = new FileOutputStream("TP-Pokemon/csv/save.txt");
         ObjectOutputStream flux = new ObjectOutputStream(fichier);
-        flux.writeObject(dresseur);
+        flux.writeObject(dresseurs);
     }
 
-    public void readToFolder() throws IOException, ClassNotFoundException {
-        FileInputStream fichier = new FileInputStream("./csv/save.txt");
+    public Dresseur readToFolder(String pseudo) throws IOException, ClassNotFoundException {
+        FileInputStream fichier = new FileInputStream("TP-Pokemon/csv/save.txt");
         ObjectInput flux = new ObjectInputStream(fichier);
-        Object objet = (Dresseur) flux.readObject();
-        System.out.println(objet.toString());
+        Object listDresseur =  flux.readObject();
+        Dresseur objet = null;
+        for(Dresseur dresseur : (ArrayList<Dresseur>) listDresseur){
+            if(dresseur.getPseudo().equals(pseudo)){
+                objet = dresseur;
+            }
+        }
+        System.out.println(objet);
+        return objet;
     }
 }

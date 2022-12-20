@@ -14,23 +14,27 @@ public class Dresseur implements Serializable
 {
     private String pseudo;
     private List<Pokemon> equipe = new ArrayList<>();
-    private long id;
+    private String socket;
     private int ticket;
     private boolean enCombat;
+    private boolean enQueue;
+    private List<Pokemon> pokeKoD1 = new ArrayList<>();
+    private List<Pokemon> pokeKoD2 = new ArrayList<>();
     
 
-    public Dresseur(String nPseudo, long nID) throws NotATypeException{
+    public Dresseur(String nPseudo, String nSocket) throws NotATypeException{
         pseudo = nPseudo;
         ticket = 0;
         enCombat = false;
+        enQueue = false;
         Pokemon pokemon = new Pokemon();
         equipe.add(pokemon);
-        id = nID;
+        socket = nSocket;
     }
 
     //Getter
-    public long getId() {
-        return id;
+    public String getSocket() {
+        return socket;
     }
 
     public boolean getEnCombat(){
@@ -46,18 +50,22 @@ public class Dresseur implements Serializable
         return pseudo;
     }
 
+    public boolean getEnQueue(){
+        return enQueue;
+    }
+    
     public List<Pokemon> getEquipe() {
             return equipe;
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> fcf1d7aad4c314e58a5e59fe0d0f75794581ee4e
     
     //Setter
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
+    }
+
+    public void setEnQueue(boolean enQueue) {
+        this.enQueue = enQueue;
     }
 
     public void setEnCombat(boolean enCombat) {
@@ -68,8 +76,8 @@ public class Dresseur implements Serializable
         this.equipe = equipe;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setSocket(String socket) {
+        this.socket = socket;
     }
 
     public void lootboxing() throws NotATypeException{
@@ -117,6 +125,6 @@ public class Dresseur implements Serializable
 
     @Override
     public String toString() {
-        return "ID: " + this.id + "; Pseudo: " + this.pseudo + "; equipe: " + this.equipe;
+        return "Socket: " + this.socket + "; Pseudo: " + this.pseudo + "; equipe: " + this.equipe;
     }
 }

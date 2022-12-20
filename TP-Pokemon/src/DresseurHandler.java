@@ -1,133 +1,111 @@
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.ArrayList;
+import java.util.concurrent.Future;
 
-public class DresseurHandler implements Runnable{
+public class DresseurHandler implements Runnable {
 
-	final DataInputStream ournewDataInputstream;
-	final DataOutputStream ournewDataOutputstream;
-	final Socket mynewSocket;
-	private String pseudoRecu;
-	private Thread myThread;
-    
-	
+	private Socket dresseur;
+	private BufferedReader in;
+	private PrintWriter out;
+	private ArrayList<DresseurHandler> dresseursHandler;
+	private ArrayList<Dresseur> dresseurs = new ArrayList<>();
+
+	private Save save = new Save();
 
 	// Constructor
-	public DresseurHandler(Socket mynewSocket, DataInputStream ournewDataInputstream, DataOutputStream ournewDataOutputstream)
-	{
-		this.mynewSocket = mynewSocket;
-		this.ournewDataInputstream = ournewDataInputstream;
-		this.ournewDataOutputstream = ournewDataOutputstream;
-		myThread = new Thread(this);
-		myThread.start();
+	public DresseurHandler(Socket dresseurSocket, ArrayList<DresseurHandler> nDresseurs) throws IOException {
+		this.dresseur = dresseurSocket;
+		in = new BufferedReader(new InputStreamReader(dresseur.getInputStream()));
+		out = new PrintWriter(dresseur.getOutputStream(), true);
+		dresseursHandler = nDresseurs;
 	}
 
 	@Override
-	public void run()
-	{
-		System.out.println(mynewSocket);
-		int receivedInt;
-		String stringToReturn;
-        try {
-            ournewDataOutputstream.writeUTF("Votre pseudo?");
-            pseudoRecu = ournewDataInputstream.readUTF();
-			//if(pseudoRecu)
-			Arene.setDresseurs(new Dresseur(pseudoRecu, myThread.getId()));
-			
-        } catch (IOException | NotATypeException e1 ) {
-            e1.printStackTrace();
-        }
-		while (true)
-		{
+	public void run() {
+		String pseudoRequest = "Bienvenu dans l'Arene! Quel est votre pseudo?";
+		out.println(pseudoRequest);
+		try {
+			String dresseurPseudo = in.readLine();
+			Dresseur d1 = null;
+			if (save.readToFolder().getPseudo().equals(dresseurPseudo)){
+				d1 = save.readToFolder();
+				dresseurs.add(d1);
+			} else {
+				d1 = new Dresseur(dresseurPseudo, dresseur.toString());
+				dresseurs.add(d1);
+			}
+			save.transToFolder(d1);
+			while(true){
+				String request = in.readLine();
+				if (request.contains("partir")) break;
+				else if (request.contains("COMBAT")){
+					out.println("En attente de joueur...");
+				}
+				else {
+					int firstSpace = request.indexOf(" ");
+					if(firstSpace != -1) {
+						outToAll(request.substring(firstSpace+1));
+					}
+				}
+			}
+		} catch (IOException | NotATypeException | ClassNotFoundException e){
+			System.err.println("IO exception in client handler");
+			System.err.println(e.getStackTrace());
+		} finally {
+			out.close();
 			try {
-				ournewDataOutputstream.writeUTF("Choose 1: Duel; 2: Liste de dresseur; 3. Lootboxing\n"+
-							"Ou 4. Partir");	
-				// reponse d'un client
-				receivedInt = ournewDataInputstream.readInt();
-
-				if(receivedInt == 4)
-				{
-					System.out.println("Client " + this.mynewSocket + " sends exit...");
-					System.out.println("Connection closing...");
-                    Arene.removeDresseur(myThread.getId());
-					this.mynewSocket.close();
-					System.out.println("Closed");
-					break;
-				}
-
-				switch (receivedInt) {
-				
-					case 1 :
-						stringToReturn = "Quel dresseur veux tu affronter(Rentrer l'ID)?";
-                        ournewDataOutputstream.writeUTF(stringToReturn);
-						long idD1 = myThread.getId();
-						long idD2 = ournewDataInputstream.readLong();
-						if (Arene.getDresseurs().containsKey(idD2)){
-							DatagramSocket combatSocket = new DatagramSocket(19000);
-							Arene.getDresseurs().get(idD1).setEnCombat(true);
-							Arene.getDresseurs().get(idD2).setEnCombat(true);
-							if(Arene.getDresseurs().get(idD1).getEnCombat() == true){
-								Combat combat = new Combat(Arene.getDresseurs().get(idD1), Arene.getDresseurs().get(idD2), combatSocket, ournewDataInputstream, ournewDataOutputstream);
-							}
-						
-						}
-						break;
-						
-					case 2 :
-						stringToReturn = Arene.getDresseurs().toString();
-                        ournewDataOutputstream.writeUTF(stringToReturn);
-						
-						break;
-					case 3 :
-                        break;
-					default:
-						ournewDataOutputstream.writeUTF("Invalid input");
-						break;
-				}
+				in.close();
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
-		try
-		{
-			// on ferme les Streams
-			this.ournewDataInputstream.close();
-			this.ournewDataOutputstream.close();
-			
-		}catch(IOException e){
-			e.printStackTrace();
+	}
+
+	public void outToAll(String msg) {
+		for (DresseurHandler dresseurClient : dresseursHandler){
+			dresseurClient.out.println(msg);
 		}
 	}
 
-	//Getters
-
-	public DataInputStream getOurnewDataInputstream() {
-		return ournewDataInputstream;
+	// Getters
+	public Socket getDresseur() {
+		return dresseur;
 	}
 
-	public DataOutputStream getOurnewDataOutputstream() {
-		return ournewDataOutputstream;
+	public BufferedReader getIn() {
+		return in;
 	}
 
-	public Socket getMynewSocket() {
-		return mynewSocket;
+	public PrintWriter getOut() {
+		return out;
 	}
 
-	public String getPseudoRecu() {
-		return pseudoRecu;
+	//Setters
+	public void setDresseur(Socket dresseur) {
+		this.dresseur = dresseur;
 	}
 
-	public Thread getMyThread() {
-		return myThread;
+	public void setIn(BufferedReader in) {
+		this.in = in;
 	}
 
-	//Stter
-	public void setPseudoRecu(String pseudoRecu) {
-		this.pseudoRecu = pseudoRecu;
+	public void setOut(PrintWriter out) {
+		this.out = out;
 	}
-    
+
+	
+
+	
+
 }

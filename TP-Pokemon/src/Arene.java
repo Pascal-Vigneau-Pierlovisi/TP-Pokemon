@@ -1,56 +1,36 @@
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import java.io.*;
-import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
+public class Arene {
+	private static ArrayList<DresseurHandler> dresseurs = new ArrayList<>();
+	private static ExecutorService pool = Executors.newFixedThreadPool(4);
 
+	public static void main(String[] args) throws IOException {
+		ServerSocket listener = new ServerSocket(18000);
 
-/* Classe qui servira de serveur, elle attendra que des joueurs se connecte
-* pour acceuillir des combats.
-*/
-public class Arene
-{
+		while (true) {
+			System.out.println("[ARENE] En attente de dresseur...");
+			Socket dresseur = listener.accept();
+			System.out.println("[ARENE] Un dresseur est rentré!");
+			DresseurHandler dresseurThread = new DresseurHandler(dresseur, dresseurs);
+			dresseurThread.outToAll("[ARENE] Un dresseur est rentré!");
+			dresseurs.add(dresseurThread);
 
-	private static Map<Long, Dresseur> dresseurs = new HashMap<Long, Dresseur>();
-	public static void main(String[] args) throws IOException
-	{
-		ServerSocket myserverSocket = new ServerSocket(18000);
-		// getting client request
-		while (true)
-        // running infinite loop 
-		{
-			Socket mynewSocket = null;
-			
-			try
-			{
-				// mynewSocket object to receive incoming client requests
-				mynewSocket = myserverSocket.accept();
-				
-				System.out.println("A new connection identified : " + mynewSocket);
-                // obtaining input and out streams
-				DataInputStream ournewDataInputstream = new DataInputStream(mynewSocket.getInputStream());
-				DataOutputStream ournewDataOutputstream = new DataOutputStream(mynewSocket.getOutputStream());
-				System.out.println("Thread assigned");
-
-				DresseurHandler myThread = new DresseurHandler(mynewSocket, ournewDataInputstream, ournewDataOutputstream);	
-				System.out.println("Thread assigned");
-			}
-			catch (Exception e){
-				mynewSocket.close();
-				e.printStackTrace();
-			}
+			pool.execute(dresseurThread);
 		}
-	}
-	public static Map<Long, Dresseur> getDresseurs() {
-		return dresseurs;
-	}
-	public static void setDresseurs(Dresseur dresseur) {
-		dresseurs.put(dresseur.getId(), dresseur);
-	}
 
-	public static void removeDresseur(long idDresseur) {
-		dresseurs.remove(idDresseur);
 	}
-	
 }

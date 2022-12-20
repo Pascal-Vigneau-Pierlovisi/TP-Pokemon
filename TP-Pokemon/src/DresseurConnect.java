@@ -1,79 +1,51 @@
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 
 public class DresseurConnect {
-    public static void main(String[] args) throws IOException
-    {
-        try
-        {
-            Scanner ourNewscanner = new Scanner(System.in);
-            InetAddress inetadress = InetAddress.getByName("localhost");
-            // on établie la connexion
-            Socket ournewsocket = new Socket(inetadress, 18000);           
-            DataInputStream ournewDataInputstream = new DataInputStream(ournewsocket.getInputStream());
-            DataOutputStream ournewDataOutputstream = new DataOutputStream(ournewsocket.getOutputStream());
-            // Dans la boucle qui suit, le client et l'handler echange des données
-            System.out.println(ournewDataInputstream.readUTF());
-            String pseudoToSend = ourNewscanner.nextLine();
-            ournewDataOutputstream.writeUTF(pseudoToSend);
-                
-            Dresseur dresseurActuel = null;
-            
-            while(dresseurActuel==null)
-            {
-                for (Dresseur dresseur : Arene.getDresseurs().values()){
-                    if (dresseur.getId() == ){
-                        dresseurActuel = dresseur;
-                    }
-                }
+    public static void main(String[] args) throws IOException, TimeoutException, ClassNotFoundException {
+        Socket socket = new Socket("localhost", 18000);
+
+        AreneConnection serverConn = new AreneConnection(socket);
+        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        Save save = new Save();
+
+        new Thread(serverConn).start();
+
+
+        String pseudo = null;
+        while (true) {
+            if (pseudo == null){
+                pseudo = keyboard.readLine();
+                out.println(pseudo);
             }
-            System.out.println("hého");
-            while (true)
-            {
-                System.out.println(ournewDataInputstream.readUTF());
-                    int tosend = ourNewscanner.nextInt();
-                    ournewDataOutputstream.writeInt(tosend);
-                    
-                
-                if(tosend == 1)
-                {
-                    System.out.println(ournewDataInputstream.readUTF());
-                    long dresseurAdv = ourNewscanner.nextLong();
-                    ournewDataOutputstream.writeLong(dresseurAdv);
-                }
-                // Sortir de la boucle while doit être quand un client rentre Exit.
-                if(tosend == 4)
-                {
-                    System.out.println("Connection closing... : " + ournewsocket);
-                    ournewsocket.close();
-                    System.out.println("Closed");
-                    break;
-                }
-                    
-                String newresuiltReceivedString = ournewDataInputstream.readUTF();
-                System.out.println(newresuiltReceivedString);
-                while(!Arene.getDresseurs().get(dresseurActuel.getId()).getEnCombat())
-                {
+            Dresseur myDresseur = save.readToFolder();
+            System.out.println("> ");
+            String command = keyboard.readLine();   
+            if (command.equals("partir")) break;
+            String concat = pseudo + ": " + command;
+            out.println(pseudo + ": " + concat);
+            
 
-                }
-                while(Arene.getDresseurs().get(dresseurActuel.getId()).getEnCombat()){
-                    ournewsocket = new Socket(inetadress, 19000);
-                    ournewDataInputstream = new DataInputStream(ournewsocket.getInputStream());
-                    ournewDataOutputstream = new DataOutputStream(ournewsocket.getOutputStream());
-                }
-
-            }     
-                
-        ourNewscanner.close();
-        ournewDataInputstream.close();
-        ournewDataOutputstream.close();
-        }catch(Exception e){
-            e.printStackTrace();
         }
+        socket.close();
+        System.exit(0);
     }
 }
-
