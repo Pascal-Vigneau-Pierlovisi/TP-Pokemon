@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 
 public class Arene {
 	private static ArrayList<DresseurHandler> dresseurs = new ArrayList<>();
-	private static ExecutorService pool = Executors.newFixedThreadPool(4);
+	private static ExecutorService pool = Executors.newFixedThreadPool(2);
 
 	public static void main(String[] args) throws IOException {
 		ServerSocket listener = new ServerSocket(18000);

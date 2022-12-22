@@ -61,7 +61,7 @@ public class Types_Poke implements Serializable {
                 }
                 
             } catch (Exception e) {
-                System.out.println("Fin du tableau " + e.toString());
+                
             }
         }
     }

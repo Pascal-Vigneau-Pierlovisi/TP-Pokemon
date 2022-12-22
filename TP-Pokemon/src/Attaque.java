@@ -46,6 +46,10 @@ public class Attaque implements Serializable{
         return puissance;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
     @Override
     public String toString() {
         // TODO Auto-generated method stub
@@ -55,32 +59,32 @@ public class Attaque implements Serializable{
  
     public int calculEfficacite(Pokemon pokAdv){
         Types_Poke tabTypes = new Types_Poke();
-        int degat = this.puissance;
+        int mult = 1;
         for (String type : pokAdv.getLst_types()) {
-            if (tabTypes.getEfficacite(type).contains(this.typeAtk)){
-                degat = 2 * this.puissance;
+            if (tabTypes.getEfficacite(this.typeAtk).contains(type)){
+                mult *= 2;
             }
         }
-        return degat;
+        return mult;
     }
 
     public int calculResistance(Pokemon pokAdv){
         Types_Poke tabTypes = new Types_Poke();
-        int degat = this.puissance;
+        int mult = 1;
         for (String type : pokAdv.getLst_types()) {
-            if (tabTypes.getPeuEfficace(type).contains(this.typeAtk)){
-                degat = (int)0.5 * this.puissance;
+            if (tabTypes.getPeuEfficace(typeAtk).contains(type)){
+                mult *= 0.5;
             }
         }
-        return degat;
+        return mult;
     }
 
     public int isNeutre(Pokemon pokAdv){
         Types_Poke tabTypes = new Types_Poke();
-        int degat = this.puissance;
+        int degat = 1;
         for (String type : pokAdv.getLst_types()) {
-            if (tabTypes.getNeutralite(type).contains(this.typeAtk)){
-                degat = (int)0 * this.puissance;
+            if (tabTypes.getNeutralite(typeAtk).contains(type)){
+                degat *= 0;
             }
         }
         return degat;
