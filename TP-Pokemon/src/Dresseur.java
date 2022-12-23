@@ -1,12 +1,10 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.*;
 
 /*Classe qui va servir de Client pour la communication
 * avec le serveur(Arène). Il attendra que d'autre Drasseur 
@@ -16,31 +14,43 @@ import java.net.*;
 public class Dresseur implements Serializable {
     private String pseudo;
     private List<Pokemon> equipe = new ArrayList<>();
-    private String socket;
     private int pokeDollars;
     private boolean enCombat;
     private boolean enQueue;
     private List<Pokemon> pokeKo = new ArrayList<>();
     private int pokeball;
     private int superbonbon;
+    private boolean attente;
 
-    public Dresseur() throws NotATypeException {
+    /* Le joueur principal utilisé pour la partie en ligne et solo
+     * instancié directement avec un Pokemon en starter parmis
+     * Bulbizarre, Salamèche et Carapuce.
+     */
+    public Dresseur(String nPseudo) throws NotATypeException {
         Scanner scan = new Scanner(System.in);
-        System.out.println("Quel est ton nom?");
-        pseudo = scan.nextLine();
+        pseudo = nPseudo;
         pokeDollars = 0;
         enCombat = false;
-        enQueue = false;
+        attente = false;
         Pokemon pokemon = new Pokemon(this);
     }
 
     // Getter
-    public String getSocket() {
-        return socket;
-    }
 
     public boolean getEnCombat() {
         return enCombat;
+    }
+
+    public int getPokeball() {
+        return pokeball;
+    }
+
+    public int getSuperbonbon() {
+        return superbonbon;
+    }
+
+    public boolean getAttente(){
+        return attente;
     }
 
     public int getPokeDollars() {
@@ -80,8 +90,8 @@ public class Dresseur implements Serializable {
         this.equipe = equipe;
     }
 
-    public void setSocket(String socket) {
-        this.socket = socket;
+    public void setAttente(boolean attente) {
+        this.attente = attente;
     }
 
     public void setPokeDollars(int pokeDollars) {
@@ -94,7 +104,7 @@ public class Dresseur implements Serializable {
 
     @Override
     public String toString() {
-        return "Socket: " + this.socket + "; Pseudo: " + this.pseudo + "; equipe: " + this.equipe + "; argent: "
+        return "; Pseudo: " + this.pseudo + "; equipe: " + this.equipe + "; argent: "
                 + this.pokeDollars;
     }
 
@@ -102,7 +112,7 @@ public class Dresseur implements Serializable {
     public void combat(Pokemon pokeAdv) throws NotATypeException, InterruptedException {
         System.out.println("Un " + pokeAdv.getNom() + " sauvage apparaît!\n");
         Random r = new Random();
-        Pokemon combattant = choisirPremierPokemon(this);
+        Pokemon combattant = choisirPremierPokemon();
         Scanner scan = new Scanner(System.in);
         Attaque atkChoisi = null;
         while (enCombat) {
@@ -113,7 +123,6 @@ public class Dresseur implements Serializable {
             System.out.println(" 1. Attaquer \n 2. Changer de Pokemon \n 3. Utiliser une pokeball \n 4. Fuite");
             int input = scan.nextInt();
             if (input == 1) {
-                System.out.println("Attaque");
                 atkChoisi = this.choisirAttaquePokemon(combattant);
                 // Compare la vitesse des pokemons et les laissent attaquer en fonction de la
                 // priorité
@@ -121,7 +130,6 @@ public class Dresseur implements Serializable {
                     System.out.println(combattant.getNom() + " est moins rapide que " + pokeAdv.getNom());
                     List<Attaque> atksAdv = new ArrayList<>();
                     for(Attaque atkAdv : pokeAdv.getLesAttaques()){
-                        System.out.println(atkAdv);
                         if(atkAdv != null){   
                             atksAdv.add(atkAdv);
                         }
@@ -138,7 +146,6 @@ public class Dresseur implements Serializable {
                 } else {
                     List<Attaque> atksAdv = new ArrayList<>();
                     for(Attaque atkAdv : pokeAdv.getLesAttaques()){
-                        System.out.println(atkAdv);
                         if(atkAdv != null){   
                             atksAdv.add(atkAdv);
                         }
@@ -308,16 +315,16 @@ public class Dresseur implements Serializable {
      * Place en premier dans l'équipe le pokemon qui sera rentré
      * dans l'input pour le début d'un combat
      */
-    public Pokemon choisirPremierPokemon(Dresseur dresseur) {
+    public Pokemon choisirPremierPokemon() {
         Scanner scan = new Scanner(System.in);
-        if (dresseur.getEquipe().size() > 1) {
-            System.out.println("Qui commence le combat?\n" + dresseur.getEquipe());
+        if (equipe.size() > 1) {
+            System.out.println("Qui commence le combat?\n" + equipe);
             int lePokemon = scan.nextInt();
-            Collections.swap(dresseur.getEquipe(), 0, lePokemon);
+            Collections.swap(equipe, 0, lePokemon);
         }
-        System.out.println(dresseur.getEquipe().get(0).getNom() + ", go!");
+        System.out.println(equipe.get(0).getNom() + ", go!");
 
-        return dresseur.getEquipe().get(0);
+        return equipe.get(0);
     }
 
     /*
@@ -343,7 +350,6 @@ public class Dresseur implements Serializable {
         }
         Collections.swap(equipe, 0, lePokemon);
         System.out.println(equipe.get(0).getNom() + ", go!");
-
         return equipe.get(0);
 
     }
@@ -383,7 +389,6 @@ public class Dresseur implements Serializable {
         System.out.println(pokAdv.getNom() + " a subit " + degat + " degats");
         pokAdv.subirDegat(degat);
         if (pokAdv.getPv() <= 0) {
-            System.out.println("lalala");
             monPoke.setNiveauIncr();
             pokAdv.setKo(true);
         }

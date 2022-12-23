@@ -1,24 +1,24 @@
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
-import java.util.concurrent.Future;
 
+
+/* Interface côté serveur d'un client, le premier dresseur est mis en attente
+ * en attendant le deuxième. le combat commence directement après.
+ */
 public class DresseurHandler implements Runnable {
 
-	private Socket dresseur;
+	private Socket socket;
 	private BufferedReader in;
 	private PrintWriter out;
-	private ArrayList<DresseurHandler> dresseursHandler;
-	private ArrayList<Dresseur> dresseurs = new ArrayList<>();
-	private Dresseur d1;
+	private static ArrayList<DresseurHandler> dresseursHandler;
+	private static ArrayList<Dresseur> dresseurs = new ArrayList<>();
+	private Dresseur dresseur;
 	private boolean combat;
 	private Scanner scan = new Scanner(System.in);
 	private boolean dresseurPret;
@@ -27,94 +27,174 @@ public class DresseurHandler implements Runnable {
 
 	// Constructor
 	public DresseurHandler(Socket dresseurSocket, ArrayList<DresseurHandler> nDresseurs) throws IOException {
-		this.dresseur = dresseurSocket;
-		in = new BufferedReader(new InputStreamReader(dresseur.getInputStream()));
-		out = new PrintWriter(dresseur.getOutputStream(), true);
+		this.socket = dresseurSocket;
+		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		out = new PrintWriter(socket.getOutputStream(), true);
 		dresseursHandler = nDresseurs;
 		combat = false;
 	}
 
 	@Override
-	public void run() {
+	public synchronized void run() {
 		String pseudoRequest = "Bienvenu dans l'Arene! Quel est votre pseudo?";
 		out.println(pseudoRequest);
 		try {
 			String dresseurPseudo = in.readLine();
 			save = new Save(dresseurPseudo);
-			if (save.saveExist(dresseurPseudo)){
-				d1 = save.readToFolder(dresseurPseudo);
-			} else {
-				d1 = new Dresseur(dresseurPseudo, dresseur.toString());
-			}
-			save.transToFolder(d1);
-			while(true){
-				String request = in.readLine();
-				if (request.contains("partir")) break;
-				else if (request.contains("COMBAT")){
-					DresseurHandler dresseurToDuel = null;
-					for (DresseurHandler dresseurClient : dresseursHandler){
-						if (request.contains(dresseurClient.d1.getPseudo())){
-							dresseurClient.out.println(d1.getPseudo() + "demande un combat! Acceptez vous?");
-							String clientResponse = dresseurClient.in.readLine();
-							if(clientResponse.contains("Oui")){
-		
-								dresseurToDuel = dresseurClient;
-								combat = true;
-								Pokemon combattant = this.choisirPremierPokemon(d1);
-								while(combat){
-									interfaceCombat(combattant, dresseurToDuel);
-									if(combattant.getKo()){
-										this.changerPokemon(d1);
-									}
-									if(d1.getPokeKo().size() == 6){
-										out.println("Vous avez perdu!" + dresseurToDuel.d1.getPseudo() + " a gagné!");
-										combat = false;
-									}
-									if(dresseurToDuel.d1.getPokeKo().size() == 6){
-										out.println("Vous avez gagné!" + dresseurToDuel.d1.getPseudo() + " a perdu!");
-										combat = false;
-									}
-									dresseurPret = false;
-								}
-								
-							}
-						}
-					}
-				} else if (request.contains("Oui")) {
-					DresseurHandler dresseurToDuel = null;
-					for (DresseurHandler dresseurClient : dresseursHandler) {
-						if (!dresseurClient.equals(this)) {
-							dresseurToDuel = dresseurClient;
-							dresseurToDuel.out.println(d1.getPseudo() + " accepte");
-							combat = true;
-							Pokemon combattant = this.choisirPremierPokemon(d1);
-							while (combat) {
-								interfaceCombat(combattant, dresseurToDuel);
-								if (combattant.getKo()) {
-									d1.getEquipe().add(combattant);
-									this.changerPokemon(d1);
-								}
-								if (d1.getPokeKo().size() == d1.getEquipe().size()) {
-									out.println("Vous avez perdu!" + dresseurToDuel.d1.getPseudo() + " a gagné!");
-									combat = false;
-								}
-								if (dresseurToDuel.d1.getPokeKo().size() == 6) {
-									out.println("Vous avez gagné!" + dresseurToDuel.d1.getPseudo() + " a perdu!");
-									combat = false;
-								}
-								dresseurPret = false;
-							}
+			dresseur = save.readToFolder(dresseurPseudo);
 
-						}
-					}
-				} else {
-					int firstSpace = request.indexOf(" ");
-					if(firstSpace != -1) {
-						outToAll(request.substring(firstSpace+1));
+			save.transToFolder(dresseur);
+			dresseursHandler.add(this);
+			dresseurs.add(dresseur);
+			combat: while (true) {
+				DresseurHandler dresseurAdv = null;
+				while (Arene.getDresseurs().size() < 2) {
+					out.print("En attente d'adversaire.\n");
+					out.print("\u001B[A");
+				}
+				for (DresseurHandler dresseur : dresseursHandler) {
+					if (!dresseur.equals(this)) {
+						dresseurAdv = dresseur;
 					}
 				}
+				synchronized (this) {
+					combat = true;
+					out.println(dresseur.getEquipe().get(0).getNom() + ", go!");
+					dresseurPret = true;
+					Pokemon combattant = dresseur.getEquipe().get(0);
+					Pokemon pokeAdv = dresseurAdv.dresseur.getEquipe().get(0);
+					/* La phase de combat en mode en ligne est plus ou moins la même
+					 * que celle du combat en mode solo mais le code n'est pas placé
+					 * dans des fonctions. Le calcul de vitesse est "simulé" avec 
+					 * un sleep du Thread qui a le dresseur avec le Pokemon le plus lent.
+					 * 
+					 */
+					while (combat) {
+						dresseurPret = false;
+						out.println(
+								combattant.getNom() + "\nNv." + combattant.getNiveau() + " " + combattant.getPv() + "/"
+										+ (int) (2 * combattant.getPvBase() * combattant.getNiveau() / 100 + 10
+												+ combattant.getNiveau())
+										+ "\n");
+						out.println(pokeAdv.getNom() + "\nNv."
+								+ pokeAdv.getNiveau() + " "
+								+ pokeAdv.getPv() + "/"
+								+ (int) (2 * pokeAdv.getPvBase()
+										* pokeAdv.getNiveau() / 100 + 10
+										+ pokeAdv.getNiveau()));
+						out.println("1. Attaquer ou 2. Changer de Pokemon?");
+
+						Attaque atkChoisi = null;
+						turn: while (dresseurPret == false) {
+							String input = in.readLine();
+							System.out.println(input);
+							if (Integer.parseInt(input) == 1) {
+								out.println("Quelle attaque utilisée? 0: " + combattant.getLesAttaques().get(0) +
+										"1: " + combattant.getLesAttaques().get(1) +
+										"2: " + combattant.getLesAttaques().get(2) +
+										"3: " + combattant.getLesAttaques().get(3));
+								String lAttaqueStr = in.readLine();
+								int lAttaque = Integer.parseInt(lAttaqueStr);
+								atkChoisi = combattant.getLesAttaques().get(lAttaque);
+								dresseurPret = true;
+								while (this.dresseurPret == false || dresseurAdv.dresseurPret == false) {
+									out.print("En attente de l'adversaire.\n");
+									out.print("\u001B[A");
+									out.print("En attente de l'adversaire..\n");
+									out.print("\u001B[A");
+									out.print("En attente de l'adversaire...\n");
+									out.print("\u001B[A");
+								}
+								if (combattant.getVitesse() < dresseurAdv.dresseur.getEquipe().get(0)
+										.getVitesse()) {
+									out.println(combattant.getNom() + " est moins rapide que "
+											+ dresseurAdv.dresseur.getEquipe().get(0).getNom());
+									Thread.sleep(2000);
+									if (!combattant.getKo()) {
+										phaseAttaque(combattant, dresseurAdv, atkChoisi);
+									}
+								} else {
+									out.println(combattant.getNom() + " est plus rapide que "
+											+ dresseurAdv.dresseur.getEquipe().get(0).getNom());
+									phaseAttaque(combattant, dresseurAdv, atkChoisi);
+								}
+								if (combattant.getKo()) {
+									/*Bloc de condition équivalent à la fonction changerPokemon()
+									 * lorsqu'un Pokemon est KO
+									*/
+									dresseur.getPokeKo().add(combattant);
+									if (dresseur.getEquipe().size() == dresseur.getPokeKo().size()){
+										out.println("Tous vos pokemons sont KO!");
+									}else{
+										if (dresseur.getEquipe().get(0).getKo()) {
+											this.out.println(
+													"Non " + dresseur.getEquipe().get(0).getNom() + "! Reviens vite!");
+										} else {
+											out.println("Revient " + dresseur.getEquipe().get(0).getNom() + " !");
+										}
+	
+										String lePokemon = in.readLine();
+										int index = Integer.parseInt(lePokemon);
+										while (dresseur.getEquipe().get(Integer.parseInt(lePokemon)).getKo()) {
+											this.out.println(
+													dresseur.getEquipe().get(Integer.parseInt(lePokemon)) + " est KO");
+											lePokemon = in.readLine();
+										}
+										Collections.swap(dresseur.getEquipe(), 0, index);
+										this.out.println(dresseur.getEquipe().get(0).getNom() + ", go!");
+										combattant = dresseur.getEquipe().get(0);
+									}
+									
+								}
+								if (dresseur.getEquipe().size() == dresseur.getPokeKo().size()) {
+									//Fin de la boucle principale quand le combat est fini
+									out.println("Vous êtes incapable de continuer le combat");
+									combat = false;
+									this.dresseur.setEnCombat(false);
+									break combat;
+								}
+								if (dresseurAdv.dresseur.getEquipe().size() == dresseurAdv.dresseur.getPokeKo()
+										.size()) {
+									out.println("Vous remportez le combat!");
+									combat = false;
+									this.dresseur.setEnCombat(false);
+									break combat;
+								}
+								break turn;
+
+							} else {
+								if (dresseur.getEquipe().get(0).getKo()) {
+									this.out.println("Non " + dresseur.getEquipe().get(0).getNom() + "! Reviens vite!");
+								} else {
+									out.println("Revient " + dresseur.getEquipe().get(0).getNom() + " !");
+								}
+								String lePokemon = in.readLine();
+								int index = Integer.parseInt(lePokemon);
+								while (dresseur.getEquipe().get(Integer.parseInt(lePokemon)).getKo()) {
+									this.out.println(dresseur.getEquipe().get(Integer.parseInt(lePokemon)) + " est KO");
+									lePokemon = in.readLine();
+								}
+								Collections.swap(dresseur.getEquipe(), 0, index);
+								this.out.println(dresseur.getEquipe().get(0).getNom() + ", go!");
+								combattant = dresseur.getEquipe().get(0);
+								dresseurPret = true;
+								while (this.dresseurPret == false && dresseurAdv.dresseurPret == false) {
+									out.print("En attente de l'adversaire.\n");
+									out.print("\u001B[A");
+									out.print("En attente de l'adversaire..\n");
+									out.print("\u001B[A");
+									out.print("En attente de l'adversaire...\n");
+									out.print("\u001B[A");
+								}
+								break turn;
+							}
+						}
+
+					}
+				}
+
 			}
-		} catch (IOException | NotATypeException | ClassNotFoundException e){
+		} catch (IOException | NotATypeException | ClassNotFoundException | InterruptedException e) {
 			System.err.println("IO exception in client handler");
 			System.err.println(e.getLocalizedMessage());
 		} finally {
@@ -129,14 +209,14 @@ public class DresseurHandler implements Runnable {
 	}
 
 	public void outToAll(String msg) {
-		for (DresseurHandler dresseurClient : dresseursHandler){
+		for (DresseurHandler dresseurClient : dresseursHandler) {
 			dresseurClient.out.println(msg);
 		}
 	}
 
 	// Getters
-	public Socket getDresseur() {
-		return dresseur;
+	public Socket getSocket() {
+		return socket;
 	}
 
 	public BufferedReader getIn() {
@@ -155,17 +235,17 @@ public class DresseurHandler implements Runnable {
 		return dresseurs;
 	}
 
-	public Dresseur getD1() {
-		return d1;
+	public Dresseur getdresseur() {
+		return dresseur;
 	}
 
 	public Save getSave() {
 		return save;
 	}
 
-	//Setters
-	public void setDresseur(Socket dresseur) {
-		this.dresseur = dresseur;
+	// Setters
+	public void setSocket(Socket socket) {
+		this.socket = socket;
 	}
 
 	public void setIn(BufferedReader in) {
@@ -176,94 +256,33 @@ public class DresseurHandler implements Runnable {
 		this.out = out;
 	}
 
-	public void interfaceCombat(Pokemon combattant, DresseurHandler dresseurAdv) throws NotATypeException {
-		out.println("1. Attaquer ou 2. Changer de Pokemon?");
-		try {
-			Attaque atkChoisi = null;
-			while (dresseurPret == false) {
-				String input = in.readLine();
-				System.out.println(input);
-				if (input.equals("1")) {
-					boolean choix = false;
-						atkChoisi = this.choisirAttaquePokemon(combattant);
-						dresseurPret = true;
-				} else {
-					combattant = this.changerPokemon(d1);
-					dresseurPret = true;
-				}
-			}
-			while(this.dresseurPret != dresseurAdv.dresseurPret){
-
-			}
-			System.out.println(combattant.getVitesse() +" "+ combattant.getVitesseBase());
-			System.out.println(dresseurAdv.d1.getEquipe().get(0).getVitesse() +" "+ dresseurAdv.d1.getEquipe().get(0).getVitesseBase());
-			if(combattant.getVitesse() < dresseurAdv.d1.getEquipe().get(0).getVitesse()){
-				
-				out.println(combattant.getNom() + "est moins rapide que " + dresseurAdv.d1.getEquipe().get(0).getNom());
-				Thread.sleep(5000);
-				if(!combattant.getKo()){
-					phaseAttaque(combattant, dresseurAdv, atkChoisi);
-				}
-			}else{
-				out.println(combattant.getNom() + "est plus rapide que " + dresseurAdv.d1.getEquipe().get(0).getNom());
-				phaseAttaque(combattant, dresseurAdv, atkChoisi);
-			}
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-		}
+	public void phaseAttaque(Pokemon combattant, DresseurHandler dresseurAdv, Attaque atkChoisi)
+			throws NotATypeException {
+		attaquer(combattant, atkChoisi, dresseurAdv.dresseur.getEquipe().get(0));
 	}
-
-	public void phaseAttaque(Pokemon combattant, DresseurHandler dresseurAdv, Attaque atkChoisi) throws NotATypeException{
-		attaquer(combattant, atkChoisi, dresseurAdv.d1.getEquipe().get(0));
-	}
-
-	public Pokemon choisirPremierPokemon(Dresseur dresseur) throws IOException{
-        if (dresseur.getEquipe().size() > 1){
-            out.println("Qui commence le combat?\n" + dresseur.getEquipe());
-            int lePokemon = in.read();
-            Collections.swap(dresseur.getEquipe(), 0, lePokemon);
-        }
-        out.println(dresseur.getEquipe().get(0).getNom() + ", go!");
-        return dresseur.getEquipe().get(0);
-    }
-
-    public Pokemon changerPokemon(Dresseur dresseur) throws IOException{
-        out.println("Revient " + dresseur.getEquipe().get(0).getNom() + " !");
-        String lePokemon = in.readLine();
-		int index = Integer.parseInt(lePokemon);
-		System.out.println(lePokemon);
-        Collections.swap(dresseur.getEquipe(), 0, index);
-        out.println(dresseur.getEquipe().get(0).getNom() + ", go!");
-        scan.close();
-        return dresseur.getEquipe().get(0);
-        
-    }
-
-    public Attaque choisirAttaquePokemon(Pokemon lePokemon) throws IOException{
-        out.println("Quelle attaque utilisée? 1: " + lePokemon.getLesAttaques().get(0) +
-                                                    "2: " + lePokemon.getLesAttaques().get(1) +
-                                                    "3: " + lePokemon.getLesAttaques().get(2) + 
-                                                    "4: " + lePokemon.getLesAttaques().get(3));
-        String lAttaqueStr = in.readLine();
-		int lAttaque = Integer.parseInt(lAttaqueStr); 
-		System.out.println(lAttaqueStr);       
-        return lePokemon.getLesAttaques().get(lAttaque);
-    }
 
 	/*
-     * Permet d'attaquer un autre pokémon dans un combat en ligne, calculant tout
-     * les dégâts infligés(Selon le calcul officiel).
-     */
-    public void attaquer(Pokemon monPoke, Attaque atkChoisi, Pokemon pokAdv) throws NotATypeException {
-		int pvRestant = (int) ((int) pokAdv.getPv() - ((monPoke.getNiveau() * 0.4 + 2) * monPoke.getAtk() * atkChoisi.getPuissance() / pokAdv.getDef()
-		* 50)
-		* atkChoisi.calculEfficacite(pokAdv)
-		* atkChoisi.calculResistance(pokAdv)
-		* atkChoisi.isNeutre(pokAdv));
-        pokAdv.setPv(pvRestant);
-        if (pokAdv.getPv() <= 0) {
-			monPoke.setNiveauIncr();
-            pokAdv.setKo(true); 
-        }
-    }
+	 * Permet d'attaquer un autre pokémon dans un combat en ligne, calculant tout
+	 * les dégâts infligés(Selon le calcul officiel).
+	 */
+	public void attaquer(Pokemon monPoke, Attaque atkChoisi, Pokemon pokAdv) throws NotATypeException {
+		int degat = 0;
+		if (atkChoisi.getGenre().equals("Physique")) {
+			degat = (int) (((((monPoke.getNiveau() * 0.4 + 2) * monPoke.getAtk() * atkChoisi.getPuissance())
+					/ pokAdv.getDef()
+					/ 50) + 2) * atkChoisi.calculEfficacite(pokAdv)
+					* atkChoisi.calculResistance(pokAdv)
+					* atkChoisi.isNeutre(pokAdv));
+		} else {
+			degat = (int) (((((monPoke.getNiveau() * 0.4 + 2) * monPoke.getAtkSpe() * atkChoisi.getPuissance())
+					/ pokAdv.getDefSpe() / 50) + 2) * atkChoisi.calculEfficacite(pokAdv)
+					* atkChoisi.calculResistance(pokAdv) * atkChoisi.isNeutre(pokAdv));
+		}
+		outToAll(monPoke.getNom() + " utilise " + atkChoisi + "!");
+		outToAll(pokAdv.getNom() + " a subit " + degat + " degats");
+		pokAdv.subirDegat(degat);
+		if (pokAdv.getPv() <= 0) {
+			pokAdv.setKo(true);
+		}
+	}
 }

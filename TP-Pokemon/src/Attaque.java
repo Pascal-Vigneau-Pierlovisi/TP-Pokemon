@@ -10,7 +10,10 @@ public class Attaque implements Serializable{
     private String typeAtk;
     private static String[] nomGenre = {"Physique", "Special", "Statut"};
 
-
+    /*Classe implémentant les attaques
+     * contrairement aux Pokemons ou la table des types, elles ne sont pas tirées d'un fichier Excel
+     * donc elles seront instancier en dur avec les Pokemons en fonctions de leur types.
+     */
     public Attaque(String nNom, String nGenre, int nPrecision, int nPuissance, String nTypeAtk, List<String> listType) throws NotATypeException{
         System.out.println(nTypeAtk);
         for (String type : listType){

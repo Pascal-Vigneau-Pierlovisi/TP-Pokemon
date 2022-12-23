@@ -1,9 +1,6 @@
-import java.util.ArrayList;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
+/* Moyen de sauvegarde d'un Dresseur par sérialisation */
 public class Save implements Serializable {
 
     private File save;
@@ -19,13 +16,6 @@ public class Save implements Serializable {
     public void transToFolder(Dresseur dresseur) throws IOException {
             try {
                 boolean result = save.createNewFile(); // creates a new save
-                if (result) // test if successfully created a new save
-                {
-                    System.out.println("save created " + save.getCanonicalPath()); // returns the path string
-                } else {
-                    System.out.println("save already exist at location: " + save.getCanonicalPath());
-
-                }
             } catch (IOException e) {
                 e.printStackTrace(); // prints exception if any
             }

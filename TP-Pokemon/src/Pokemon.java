@@ -33,10 +33,12 @@ public class Pokemon implements Serializable {
 
     // Constructeur
     /*
-     * Construit le pokémon en obligeant qu'il soit au premier stade d'évolution
-     * et lui donne toutes les stats répertorié dans le Pokedex.
-     * Le constructeur donne aussi une ou deux attaques en fonction de son ou ses
-     * types
+     * Construit le pokémon starter d'un nouveau joueur, soit
+     * Bulbizarre, Salamèche et Carapuce(D'autre pour être rajouté avec le Excel).
+     * Comme dit dans Attaque, les attaques des pokemons sont instanciés en dur à leur création
+     * par soucis de Movepool de pokemon sous forme d'Excel existant.
+     * Les statistique données sont plus au moins les stats officiels des pokemons
+     * sans le calcul D'IV et d'EV, par soucis de logique d'implémentation.
      */
     public Pokemon(Dresseur dresseur) throws NotATypeException {
         Scanner scan = new Scanner(System.in);
@@ -182,6 +184,7 @@ public class Pokemon implements Serializable {
         }
 
     }
+
 
     public Pokemon(int nNiveau) throws NotATypeException {
         numPokedex = r.nextInt(pokedex.getPokedex().size()+1);
@@ -515,10 +518,14 @@ public class Pokemon implements Serializable {
                 + this.lesAttaques + " Stats: " + this.atk+"|" + this.atkSpe +"|" + this.def +"|" + this.defSpe +"|" + this.vitesse + " KO? " + this.ko;
     }
 
+    /* Enlève des PVs aux pokémons après avoir subit des dégâts */
     public void subirDegat(int degat){
         this.pv = pv - degat; 
     }
 
+    /* Soigne le pokemon en remettant ses PVs au maximum
+     * et changeant son état de KO si nécessaire.
+     */
     public void soigner() {
         pv = (int) (2 * pvBase * niveau / 100 + 10 + niveau);
         if(ko == true){
@@ -528,7 +535,8 @@ public class Pokemon implements Serializable {
 
     /*
      * Fait évoluer le pokémon en lui rajoutant une ou deux attaques en fonction de
-     * ses types
+     * ses types. evoluer1() est faites par le passage du premier au second stade
+     * et evoluer2() du second au troisième.
      */
     public void evoluer2() throws NotATypeException {
         if ((boolean) pokedex.getPokedex().get(numPokedex).get(2)) {

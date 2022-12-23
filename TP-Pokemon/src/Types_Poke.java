@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+
+/* Tables des types pokemons, permettant de calculer l'efficacite et resistance en fonction des types */
 public class Types_Poke implements Serializable {
 
     private Map<String, List<String>> efficacite = new HashMap<>();
